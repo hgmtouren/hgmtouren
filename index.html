@@ -5,405 +5,570 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HGM Touren</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap">
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --dark: #0d1f14;
-    --green: #1a3a2a;
-    --mid: #234d38;
-    --card: #1e4030;
-    --gold: #c9a227;
-    --gold-light: #e8c04a;
-    --cream: #f5f0e8;
-    --text: #e8e4dc;
-    --muted: #8aaa98;
+    --cream: #f5f2ec;
+    --dark:  #1a1a18;
+    --green: #1e3d2a;
+    --green-mid: #2a5a3a;
+    --green-light: #4a8a5a;
+    --gold:  #c9a227;
+    --gold-soft: #e8c04a;
+    --muted: #888880;
+    --border: #d8d3c8;
     --lag-g: #2a6a45;
     --lag-h: #7a2a45;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
   body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
+    font-family: 'DM Mono', monospace;
+    background: var(--cream);
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.7;
   }
 
-  /* NAV */
+  /* ── NAV ── */
   nav {
-    background: rgba(13,31,20,0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(201,162,39,0.2);
-    position: sticky; top: 0; z-index: 100;
-    padding: 0 24px;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    height: 60px;
+    padding: 20px 60px;
+    background: rgba(245,242,236,0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
   }
   .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    letter-spacing: 3px;
-    color: var(--gold);
-    text-decoration: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--green); text-decoration: none;
   }
-  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
   .nav-links a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    text-decoration: none; color: var(--muted);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
     transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover { color: var(--dark); }
 
-  /* HERO */
+  /* ── HERO ── */
   .hero {
-    min-height: 85vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 60px 24px;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(180deg, #0a1a0f 0%, var(--green) 60%, var(--dark) 100%);
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 120px 60px 90px;
+    position: relative; overflow: hidden;
+    background: var(--green);
   }
-  .hero::before {
-    content: '';
+  .hero-bg {
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 30%, rgba(201,162,39,0.07) 0%, transparent 65%);
+    background:
+      radial-gradient(ellipse at 75% 15%, rgba(201,162,39,0.14) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 85%, rgba(74,138,90,0.25) 0%, transparent 50%);
   }
-  .hero-year {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 5px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 16px;
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,0.03) 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,0.03) 60px);
   }
-  .hero h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(72px, 18vw, 160px);
-    letter-spacing: 4px;
+  .hero-content { position: relative; z-index: 2; max-width: 740px; }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 9vw, 104px);
+    font-weight: 300; line-height: 0.95;
     color: var(--cream);
-    line-height: 0.9;
-    margin-bottom: 12px;
+    animation: fadeUp 0.8s 0.1s ease both;
   }
-  .hero h1 span { color: var(--gold); }
+  .hero-title em { font-style: italic; color: var(--gold); }
   .hero-sub {
-    font-size: clamp(14px, 3vw, 18px);
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 48px;
+    margin-top: 32px; color: rgba(245,242,236,0.55);
+    font-size: 13px; max-width: 440px; line-height: 1.8;
+    animation: fadeUp 0.8s 0.2s ease both;
   }
-  .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-  .btn {
-    display: inline-block;
-    padding: 14px 32px;
-    border-radius: 6px;
-    font-size: 13px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.2s;
+  .hero-stats {
+    margin-top: 64px; display: flex; gap: 56px;
+    animation: fadeUp 0.8s 0.3s ease both;
   }
-  .btn-gold {
-    background: var(--gold);
-    color: #0d1f14;
-  }
-  .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
-  .btn-outline {
-    border: 1.5px solid rgba(201,162,39,0.5);
-    color: var(--gold);
-  }
-  .btn-outline:hover { border-color: var(--gold); background: rgba(201,162,39,0.08); }
-
-  /* STATS STRIP */
-  .stats-strip {
-    background: var(--mid);
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 32px 24px;
-    display: flex; justify-content: center;
-    gap: 0;
-  }
-  .stat-item {
-    text-align: center;
-    padding: 0 40px;
-    border-right: 1px solid rgba(255,255,255,0.08);
-  }
-  .stat-item:last-child { border-right: none; }
-  .stat-number {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    color: var(--gold);
-    line-height: 1;
-    display: block;
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300;
+    color: var(--cream); line-height: 1; display: block;
   }
   .stat-label {
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 2px; text-transform: uppercase;
-    color: var(--muted);
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(245,242,236,0.4);
     margin-top: 4px;
   }
+  .hero-divider {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+    background: linear-gradient(to bottom right, var(--green) 50%, var(--cream) 50%);
+  }
 
-  /* SECTIONS */
-  section { max-width: 1000px; margin: 0 auto; padding: 70px 24px; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-  .section-eyebrow {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 12px;
+  /* ── SECTION BASE ── */
+  .section { padding: 100px 60px; }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
   }
   .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(36px, 6vw, 56px);
-    letter-spacing: 2px;
-    color: var(--cream);
-    margin-bottom: 40px;
-    line-height: 1.1;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 300; line-height: 1.1;
+    color: var(--dark); margin-bottom: 52px;
   }
 
-  /* LAG CARDS */
-  .lag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  /* ── MÄSTARE ── */
+  #mastare { background: var(--cream); }
+  .champion-wrap {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    max-width: 860px;
+  }
+  .champion-left {
+    background: var(--green);
+    padding: 52px 44px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .champion-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 96px; font-weight: 300;
+    color: rgba(201,162,39,0.25); line-height: 1;
+  }
+  .champion-trophy { font-size: 48px; margin-bottom: 20px; }
+  .champion-label {
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+  }
+  .champion-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px; font-weight: 400; line-height: 1.1;
+    color: var(--cream); margin-bottom: 12px;
+  }
+  .champion-sub {
+    font-size: 12px; color: rgba(245,242,236,0.45);
+    line-height: 1.6;
+  }
+  .champion-right {
+    background: #fff;
+    padding: 52px 44px;
+    border-left: 1px solid var(--border);
+  }
+  .champion-right h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300;
+    color: var(--dark); margin-bottom: 32px;
+    padding-bottom: 20px; border-bottom: 1px solid var(--border);
+  }
+  .prev-winners { display: flex; flex-direction: column; gap: 0; }
+  .prev-row {
+    display: flex; align-items: center; gap: 20px;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+  }
+  .prev-row:last-child { border-bottom: none; }
+  .prev-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; color: var(--gold); font-weight: 300;
+    min-width: 50px;
+  }
+  .prev-name { flex: 1; font-size: 13px; color: var(--dark); }
+  .prev-chip {
+    font-size: 10px; letter-spacing: 0.1em;
+    padding: 3px 10px; border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .prev-chip.multi {
+    border-color: rgba(201,162,39,0.4);
+    color: var(--gold);
+  }
+
+  /* ── LAGEN ── */
+  #lagen { background: var(--dark); }
+  #lagen .section-title { color: var(--cream); }
+  .lag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
   .lag-card {
-    border-radius: 12px;
-    overflow: hidden;
-    padding: 32px;
+    padding: 48px 44px;
     position: relative;
   }
-  .lag-g { background: linear-gradient(135deg, #1a3d2a 0%, #0d2018 100%); border: 1px solid rgba(42,106,69,0.4); }
-  .lag-h { background: linear-gradient(135deg, #3d1a2a 0%, #200d18 100%); border: 1px solid rgba(122,42,69,0.4); }
+  .lag-g-card { background: #1a3020; }
+  .lag-h-card { background: #301a20; }
+  .lag-eyebrow {
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .lag-g-card .lag-eyebrow { color: rgba(90,170,117,0.7); }
+  .lag-h-card .lag-eyebrow { color: rgba(192,96,122,0.7); }
   .lag-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px; letter-spacing: 2px;
-    margin-bottom: 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300; line-height: 1;
+    margin-bottom: 32px;
   }
-  .lag-g .lag-name { color: #5aaa75; }
-  .lag-h .lag-name { color: #c0607a; }
-  .lag-desc { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-  .lag-players { display: flex; flex-wrap: wrap; gap: 8px; }
-  .player-chip {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 13px; font-weight: 500;
-    color: var(--text);
+  .lag-g-card .lag-name { color: #5aaa75; }
+  .lag-h-card .lag-name { color: #c0607a; }
+  .lag-players { display: flex; flex-direction: column; gap: 10px; }
+  .player-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px; color: rgba(245,242,236,0.65);
   }
+  .player-row:last-child { border-bottom: none; }
+  .player-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .lag-g-card .player-dot { background: #5aaa75; }
+  .lag-h-card .player-dot { background: #c0607a; }
 
-  /* CHAMPION PREVIEW */
-  .champion-preview {
-    background: linear-gradient(135deg, #1a3d2e 0%, #0d2018 100%);
-    border: 2px solid var(--gold);
-    border-radius: 16px;
-    padding: 40px;
-    display: flex;
-    align-items: center;
-    gap: 40px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(201,162,39,0.1);
+  /* ── FORMAT ── */
+  #format { background: var(--cream); }
+  .format-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
   }
-  .champion-year-big {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 96px; color: var(--gold);
-    opacity: 0.15; line-height: 1;
-    min-width: 160px; text-align: center;
-  }
-  .champion-info .trophy { font-size: 40px; margin-bottom: 12px; }
-  .champion-info .label {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 3px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 8px;
-  }
-  .champion-info .name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px; letter-spacing: 2px;
-    color: var(--cream); line-height: 1; margin-bottom: 8px;
-  }
-  .champion-info .sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-  .titles { display: flex; gap: 10px; flex-wrap: wrap; }
-  .title-chip {
-    background: rgba(201,162,39,0.12);
-    border: 1px solid rgba(201,162,39,0.35);
-    color: var(--gold-light);
-    font-size: 12px; font-weight: 600;
-    padding: 5px 14px; border-radius: 20px;
-  }
-
-  /* FORMAT */
-  .format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .format-card {
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px;
-    padding: 28px 24px;
+    background: #fff;
+    padding: 36px 32px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
   }
-  .format-icon { font-size: 32px; margin-bottom: 14px; }
+  .format-card:hover { border-color: var(--green-light); }
+  .format-icon { font-size: 28px; margin-bottom: 20px; display: block; }
   .format-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 1px;
-    color: var(--cream); margin-bottom: 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 400;
+    color: var(--dark); margin-bottom: 10px;
   }
-  .format-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .format-desc { font-size: 12px; color: var(--muted); line-height: 1.8; }
 
-  /* FOOTER */
+  /* ── HISTORIK ── */
+  #historik { background: var(--dark); }
+  #historik .section-title { color: var(--cream); }
+  .timeline { position: relative; padding-left: 32px; max-width: 700px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 1px; background: var(--green-light); opacity: 0.4;
+  }
+  .timeline-item {
+    position: relative; margin-bottom: 56px;
+    opacity: 0; transform: translateX(-10px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+  .timeline-dot {
+    position: absolute; left: -38px; top: 7px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--gold); border: 2px solid var(--dark);
+  }
+  .timeline-year {
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+  }
+  .timeline-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 300;
+    color: var(--cream); margin-bottom: 12px;
+  }
+  .timeline-text {
+    color: rgba(245,242,236,0.5); font-size: 13px;
+    max-width: 540px; line-height: 1.8;
+  }
+  .timeline-badge {
+    display: inline-block; margin-top: 14px;
+    padding: 6px 16px;
+    border: 1px solid var(--green-light); color: var(--green-light);
+    font-size: 11px; letter-spacing: 0.1em;
+  }
+
+  /* ── FOOTER ── */
   footer {
+    background: var(--green);
+    padding: 60px;
+    display: flex; align-items: center; justify-content: space-between;
     border-top: 1px solid rgba(255,255,255,0.06);
-    text-align: center;
-    padding: 40px 24px;
-    color: var(--muted);
-    font-size: 13px;
   }
-  footer strong { color: var(--gold); font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 16px; }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; color: var(--cream); font-weight: 300;
+    letter-spacing: 0.04em;
+  }
+  .footer-right {
+    font-size: 11px; color: rgba(245,242,236,0.35);
+    text-align: right; letter-spacing: 0.08em; line-height: 2;
+  }
 
-  /* RESPONSIVE */
-  @media (max-width: 700px) {
-    .nav-links { display: none; }
-    .stats-strip { flex-wrap: wrap; gap: 24px; }
-    .stat-item { border-right: none; padding: 0 20px; }
+  /* ── RESPONSIVE ── */
+  @media (max-width: 800px) {
+    nav { padding: 16px 24px; }
+    .nav-links { gap: 20px; }
+    .hero, .section { padding: 80px 24px; }
+    .hero { padding-bottom: 100px; }
+    .hero-stats { gap: 32px; flex-wrap: wrap; }
+    .champion-wrap { grid-template-columns: 1fr; }
+    .champion-right { border-left: none; border-top: 1px solid var(--border); }
     .lag-grid { grid-template-columns: 1fr; }
+    .format-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-right { text-align: center; }
+  }
+  @media (max-width: 500px) {
     .format-grid { grid-template-columns: 1fr; }
-    .champion-preview { flex-direction: column; gap: 20px; text-align: center; }
-    .champion-year-big { display: none; }
+    .champion-year { font-size: 64px; }
   }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">HGM Touren</a>
   <ul class="nav-links">
     <li><a href="/spelarna/">Spelarna</a></li>
     <li><a href="/mastare/">Mästare</a></li>
-    <li><a href="#format">Format</a></li>
+    <li><a href="#historik">Historik</a></li>
   </ul>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-year">Säsong 2026</div>
-  <h1>HGM<br><span>Touren</span></h1>
-  <div class="hero-sub">Sällskapsgolf på hög nivå sedan 2010</div>
-  <div class="hero-buttons">
-    <a href="/spelarna/" class="btn btn-gold">Spelarna &amp; Statistik</a>
-    <a href="/mastare/" class="btn btn-outline">Hall of Champions</a>
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">HGM Touren · Sällskapsgolf sedan 2010</p>
+    <h1 class="hero-title">Golf,<br><em>gemenskap</em><br>&amp; birdisar.</h1>
+    <p class="hero-sub">Resultat, statistik och minnen från år av fairways, gropar och oförglömliga ronder på de bästa banorna i Sverige.</p>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">17</span>
+        <div class="stat-label">Säsonger</div>
+      </div>
+      <div>
+        <span class="stat-num">15</span>
+        <div class="stat-label">Spelare</div>
+      </div>
+      <div>
+        <span class="stat-num">2</span>
+        <div class="stat-label">Lag</div>
+      </div>
+      <div>
+        <span class="stat-num">8</span>
+        <div class="stat-label">Omgångar 2026</div>
+      </div>
+    </div>
   </div>
+  <div class="hero-divider"></div>
 </div>
 
-<!-- STATS -->
-<div class="stats-strip">
-  <div class="stat-item">
-    <span class="stat-number">17</span>
-    <div class="stat-label">Säsonger</div>
-  </div>
-  <div class="stat-item">
-    <span class="stat-number">15</span>
-    <div class="stat-label">Spelare</div>
-  </div>
-  <div class="stat-item">
-    <span class="stat-number">2</span>
-    <div class="stat-label">Lag</div>
-  </div>
-  <div class="stat-item">
-    <span class="stat-number">8</span>
-    <div class="stat-label">Omgångar 2026</div>
-  </div>
-</div>
-
-<!-- REIGNING CHAMPION -->
-<section>
-  <div class="section-eyebrow">Hall of Champions</div>
-  <div class="section-title">Regerande Mästare</div>
-  <div class="champion-preview">
-    <div class="champion-year-big">2026</div>
-    <div class="champion-info">
-      <div class="trophy">🏆</div>
-      <div class="label">HGM Touren Mästare 2026</div>
-      <div class="name">Mikael Ehrenborg</div>
-      <div class="sub">Tredje titeln — 2023, 2025 &amp; 2026</div>
-      <div class="titles">
-        <span class="title-chip">🏆 2026</span>
-        <span class="title-chip">🏆 2025</span>
-        <span class="title-chip">🏆 2023</span>
+<!-- MÄSTARE -->
+<section class="section" id="mastare">
+  <p class="section-label">Hall of Champions</p>
+  <h2 class="section-title">Regerande Mästare</h2>
+  <div class="champion-wrap">
+    <div class="champion-left">
+      <div class="champion-year">2026</div>
+      <div>
+        <div class="champion-label">HGM Touren Mästare 2026</div>
+        <div class="champion-name">Mikael<br>Ehrenborg</div>
+        <div class="champion-sub">Tredje titeln i HGM Touren.<br>2023 · 2025 · 2026</div>
+      </div>
+    </div>
+    <div class="champion-right">
+      <h3>Tidigare Mästare</h3>
+      <div class="prev-winners">
+        <div class="prev-row">
+          <span class="prev-year">2025</span>
+          <span class="prev-name">Mikael Ehrenborg</span>
+          <span class="prev-chip multi">3× Mästare</span>
+        </div>
+        <div class="prev-row">
+          <span class="prev-year">2024</span>
+          <span class="prev-name">Hans Wahlberg</span>
+          <span class="prev-chip">1× Mästare</span>
+        </div>
+        <div class="prev-row">
+          <span class="prev-year">2023</span>
+          <span class="prev-name">Mikael Ehrenborg</span>
+          <span class="prev-chip multi">3× Mästare</span>
+        </div>
+        <div class="prev-row">
+          <span class="prev-year">2022</span>
+          <span class="prev-name">Staffan Fritiofsson</span>
+          <span class="prev-chip">1× Mästare</span>
+        </div>
+        <div class="prev-row">
+          <span class="prev-year">2021</span>
+          <span class="prev-name">Lars Ambratt</span>
+          <span class="prev-chip">1× Mästare</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- LAGEN -->
-<section>
-  <div class="section-eyebrow">Säsong 2026</div>
-  <div class="section-title">Lagen</div>
+<section class="section" id="lagen">
+  <p class="section-label">Säsong 2026</p>
+  <h2 class="section-title" style="color:var(--cream);">Lagen</h2>
   <div class="lag-grid">
-    <div class="lag-card lag-g">
+    <div class="lag-card lag-g-card">
+      <div class="lag-eyebrow">GAY · Det gröna laget</div>
       <div class="lag-name">Lag G</div>
-      <div class="lag-desc">GAY · Det gröna laget</div>
       <div class="lag-players">
-        <span class="player-chip">Lufsen</span>
-        <span class="player-chip">Frallan</span>
-        <span class="player-chip">Ossa</span>
-        <span class="player-chip">EB</span>
-        <span class="player-chip">Översten</span>
-        <span class="player-chip">Lillegubben</span>
-        <span class="player-chip">Pajken</span>
+        <div class="player-row"><span class="player-dot"></span>Lufsen</div>
+        <div class="player-row"><span class="player-dot"></span>Frallan</div>
+        <div class="player-row"><span class="player-dot"></span>Ossa</div>
+        <div class="player-row"><span class="player-dot"></span>EB</div>
+        <div class="player-row"><span class="player-dot"></span>Översten</div>
+        <div class="player-row"><span class="player-dot"></span>Lillegubben</div>
+        <div class="player-row"><span class="player-dot"></span>Pajken</div>
       </div>
     </div>
-    <div class="lag-card lag-h">
+    <div class="lag-card lag-h-card">
+      <div class="lag-eyebrow">HETRO · Det röda laget</div>
       <div class="lag-name">Lag H</div>
-      <div class="lag-desc">HETRO · Det röda laget</div>
       <div class="lag-players">
-        <span class="player-chip">27:an</span>
-        <span class="player-chip">Spikrak</span>
-        <span class="player-chip">Kaka</span>
-        <span class="player-chip">Mike</span>
-        <span class="player-chip">Tämo</span>
-        <span class="player-chip">Sillen</span>
-        <span class="player-chip">Svågern</span>
-        <span class="player-chip">Idioten</span>
+        <div class="player-row"><span class="player-dot"></span>27:an</div>
+        <div class="player-row"><span class="player-dot"></span>Spikrak</div>
+        <div class="player-row"><span class="player-dot"></span>Kaka</div>
+        <div class="player-row"><span class="player-dot"></span>Mike</div>
+        <div class="player-row"><span class="player-dot"></span>Tämo</div>
+        <div class="player-row"><span class="player-dot"></span>Sillen</div>
+        <div class="player-row"><span class="player-dot"></span>Svågern</div>
+        <div class="player-row"><span class="player-dot"></span>Idioten</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FORMAT -->
-<section id="format">
-  <div class="section-eyebrow">Hur det funkar</div>
-  <div class="section-title">Tourens Format</div>
+<section class="section" id="format">
+  <p class="section-label">Hur det funkar</p>
+  <h2 class="section-title">Tourens Format</h2>
   <div class="format-grid">
     <div class="format-card">
-      <div class="format-icon">⛳</div>
+      <span class="format-icon">⛳</span>
       <div class="format-title">Grundomgångar</div>
-      <div class="format-desc">8 grundomgångar under säsongen. Poäng samlas i Top 6 — de 6 bästa rundorna räknas för slutställningen.</div>
+      <div class="format-desc">8 omgångar under säsongen. Poäng samlas i Top 6 — de 6 bästa rundorna räknas för slutställningen.</div>
     </div>
     <div class="format-card">
-      <div class="format-icon">🥊</div>
+      <span class="format-icon">🥊</span>
       <div class="format-title">Individuellt Matchspel</div>
-      <div class="format-desc">Parallellt individuellt matchspel under grundomgångarna. Alla möter alla i ett internt cupsystem.</div>
+      <div class="format-desc">Parallellt matchspel under grundomgångarna. Alla möter alla i ett internt cupsystem.</div>
     </div>
     <div class="format-card">
-      <div class="format-icon">🏆</div>
+      <span class="format-icon">🏆</span>
       <div class="format-title">Slutspelet</div>
-      <div class="format-desc">Topp 8 från grundomgångarna möts i slutspelet. Knockout-format avgör vem som kröns till årets HGM Touren Mästare.</div>
+      <div class="format-desc">Topp 8 möts i slutspelet. Knockout-format avgör vem som kröns till årets HGM Touren Mästare.</div>
     </div>
     <div class="format-card">
-      <div class="format-icon">🎯</div>
+      <span class="format-icon">🎯</span>
       <div class="format-title">Lilla Rundan</div>
       <div class="format-desc">9 hål med separat poängsamling. Egna mästerskap och priser för den som behärskar de nio.</div>
     </div>
     <div class="format-card">
-      <div class="format-icon">📍</div>
+      <span class="format-icon">📍</span>
       <div class="format-title">Närmast Pin</div>
       <div class="format-desc">Uttagning på utvalda hål varje omgång. Årets bästa pin-träffar summeras i en separat rankning.</div>
     </div>
     <div class="format-card">
-      <div class="format-icon">💨</div>
+      <span class="format-icon">💨</span>
       <div class="format-title">Längsta Drive</div>
-      <div class="format-desc">Årets hårdast slagna driver mäts och rankas. En separat titel som går till säsongens kraftigaste slagare.</div>
+      <div class="format-desc">Årets hårdast slagna driver mäts och rankas. En separat titel för säsongens kraftigaste slagare.</div>
     </div>
   </div>
 </section>
 
+<!-- HISTORIK -->
+<section class="section" id="historik">
+  <p class="section-label">Åren som gått</p>
+  <h2 class="section-title">Historik</h2>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <p class="timeline-year">2026 · Säsong 17</p>
+      <h3 class="timeline-headline">Mikael Ehrenborg på nytt</h3>
+      <p class="timeline-text">Mikael Ehrenborg tar sin tredje titel i HGM Touren och befäster sin plats som tourens mest framgångsrike spelare genom tiderna.</p>
+      <span class="timeline-badge">🏆 Mästare: Mikael Ehrenborg</span>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <p class="timeline-year">2025 · Säsong 16</p>
+      <h3 class="timeline-headline">EB återtar kronan</h3>
+      <p class="timeline-text">Mikael Ehrenborg är tillbaka på tronen efter att Hans Wahlberg hållit titeln ett år. En stark säsong med imponerande slutspel.</p>
+      <span class="timeline-badge">🏆 Mästare: Mikael Ehrenborg</span>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <p class="timeline-year">2024 · Säsong 15</p>
+      <h3 class="timeline-headline">Wahlberg bryter serien</h3>
+      <p class="timeline-text">Hans Wahlberg tar sin första och enda titel och bryter Mikaels dominans. En oväntat dramatisk säsongsavslutning.</p>
+      <span class="timeline-badge">🏆 Mästare: Hans Wahlberg</span>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <p class="timeline-year">2023 · Säsong 14</p>
+      <h3 class="timeline-headline">Mikaels första titel</h3>
+      <p class="timeline-text">Mikael Ehrenborg tar sin första HGM Touren-titel i en spänd finale. Titeljakten är igång och sällskapet börjar ana att en dynasti är på gång.</p>
+      <span class="timeline-badge">🏆 Mästare: Mikael Ehrenborg</span>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <p class="timeline-year">2022 · Säsong 13</p>
+      <h3 class="timeline-headline">Staffan tar hem det</h3>
+      <p class="timeline-text">Staffan Fritiofsson kröns till mästare 2022 i en jämn säsong. En välförtjänt titel för en av tourens mest pålitliga spelare.</p>
+      <span class="timeline-badge">🏆 Mästare: Staffan Fritiofsson</span>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <p class="timeline-year">2021 · Säsong 12</p>
+      <h3 class="timeline-headline">Lars Ambratt kröns</h3>
+      <p class="timeline-text">Lars Ambratt vinner mästartiteln 2021. HGM Touren fortsätter att leverera högt spel och starka kamrater på banan.</p>
+      <span class="timeline-badge">🏆 Mästare: Lars Ambratt</span>
+    </div>
+
+  </div>
+</section>
+
 <footer>
-  <strong>HGM Touren</strong><br>
-  <span style="margin-top:8px;display:block;">Sällskapsgolf sedan 2010 · hgmtouren.se</span>
+  <div class="footer-logo">HGM Touren</div>
+  <div class="footer-right">
+    Sällskapsgolf sedan 2010<br>
+    hgmtouren.se
+  </div>
 </footer>
+
+<script>
+  const items = document.querySelectorAll('.timeline-item');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.1 });
+  items.forEach(el => obs.observe(el));
+</script>
 
 </body>
 </html>
