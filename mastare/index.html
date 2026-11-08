@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mästare — HGM Touren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f5f2ec;
+    --dark:  #1a1a18;
+    --green: #1e3d2a;
+    --green-mid: #2a5a3a;
+    --green-light: #4a8a5a;
+    --gold:  #c9a227;
+    --gold-soft: #e8c857;
+    --silver: #b0b4bc;
+    --bronze: #c47e3a;
+    --muted: #888880;
+    --border: #d8d3c8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--cream);
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(245,242,236,0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--green); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--muted);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--dark); }
+
+  /* ── HERO CHAMPION ── */
+  .champion-hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+  }
+  .champion-left {
+    background: var(--green);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 80px 70px;
+    position: relative; overflow: hidden;
+  }
+  .champion-left-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(201,162,39,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, rgba(74,138,90,0.2) 0%, transparent 50%);
+  }
+  .champion-left-grid {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,0.03) 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,0.03) 60px);
+  }
+  .champion-left-content { position: relative; z-index: 2; }
+  .champion-year-bg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 180px; font-weight: 300; line-height: 1;
+    color: rgba(201,162,39,0.1);
+    position: absolute; bottom: 70px; right: 60px;
+    pointer-events: none;
+  }
+  .champion-eyebrow {
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 20px;
+  }
+  .champion-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(48px, 6vw, 80px);
+    font-weight: 300; line-height: 0.95;
+    color: var(--cream); margin-bottom: 32px;
+  }
+  .champion-title em { font-style: italic; color: var(--gold); }
+  .champion-desc {
+    color: rgba(245,242,236,0.5); font-size: 13px;
+    max-width: 340px; line-height: 1.8;
+    padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .titles-row {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;
+  }
+  .title-chip {
+    padding: 6px 14px;
+    border: 1px solid rgba(201,162,39,0.4);
+    color: var(--gold); font-size: 11px; letter-spacing: 0.1em;
+  }
+
+  .champion-right {
+    background: #fff;
+    display: flex; align-items: stretch;
+    position: relative; overflow: hidden;
+  }
+  .champion-photo {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center top;
+    display: block;
+  }
+  .champion-photo-placeholder {
+    width: 100%; height: 100%; min-height: 60vh;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #e8e4dc, #d8d3c8);
+  }
+  .champion-photo-placeholder span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px; font-weight: 300;
+    color: rgba(26,26,24,0.15);
+  }
+  .champion-photo-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(26,26,24,0.6) 0%, transparent 50%);
+    padding: 40px 36px 36px;
+  }
+  .champion-photo-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 300;
+    color: #fff; line-height: 1;
+  }
+  .champion-photo-year {
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold); margin-top: 6px;
+  }
+
+  /* ── ALL-TIME TABLE ── */
+  #alltime { padding: 100px 60px; background: var(--cream); }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 300; line-height: 1.1;
+    color: var(--dark); margin-bottom: 52px;
+  }
+  .alltime-table {
+    width: 100%; max-width: 760px;
+    border-collapse: collapse;
+  }
+  .alltime-table th {
+    text-align: left; padding: 0 20px 16px 0;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+  .alltime-table td {
+    padding: 20px 20px 20px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px; color: var(--dark);
+    vertical-align: middle;
+  }
+  .rank-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; font-weight: 300;
+    color: var(--muted); min-width: 44px; display: inline-block;
+  }
+  .rank-num.gold   { color: var(--gold); }
+  .rank-num.silver { color: var(--silver); }
+  .rank-num.bronze { color: var(--bronze); }
+  .titles-dots { display: flex; gap: 5px; align-items: center; }
+  .title-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); opacity: 0.4;
+  }
+  .title-dot.filled { opacity: 1; }
+
+  /* ── HISTORY GRID ── */
+  #historik { padding: 100px 60px; background: var(--dark); }
+  #historik .section-title { color: var(--cream); }
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2px;
+  }
+  .history-card {
+    position: relative; overflow: hidden;
+    aspect-ratio: 3/4;
+    background: #2a2a28;
+    cursor: default;
+  }
+  .history-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; opacity: 0.65;
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .history-card:hover img { opacity: 0.85; transform: scale(1.04); }
+  .history-card-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: #2a2a28;
+  }
+  .history-card-placeholder span {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px; font-weight: 300;
+    color: rgba(255,255,255,0.1);
+  }
+  .history-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,26,24,0.9) 0%, transparent 55%);
+    padding: 24px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .history-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px; font-weight: 300;
+    color: rgba(201,162,39,0.5); line-height: 1; margin-bottom: 6px;
+  }
+  .history-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300;
+    color: var(--cream); line-height: 1.1;
+  }
+  .history-badge {
+    margin-top: 8px; display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--green);
+    padding: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; color: var(--cream); font-weight: 300;
+  }
+  .footer-right {
+    font-size: 11px; color: rgba(245,242,236,0.35);
+    text-align: right; letter-spacing: 0.08em; line-height: 2;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { gap: 20px; }
+    .champion-hero { grid-template-columns: 1fr; min-height: auto; }
+    .champion-left { padding: 100px 32px 60px; }
+    .champion-right { min-height: 60vw; }
+    #alltime, #historik { padding: 80px 24px; }
+    footer { flex-direction: column; gap: 20px; }
+    .footer-right { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">HGM Touren</a>
+  <ul class="nav-links">
+    <li><a href="/spelarna/">Spelarna</a></li>
+    <li><a href="/mastare/" class="active">Mästare</a></li>
+    <li><a href="/#historik">Historik</a></li>
+  </ul>
+</nav>
+
+<!-- HERO: 2026 CHAMPION -->
+<div class="champion-hero">
+  <div class="champion-left">
+    <div class="champion-left-bg"></div>
+    <div class="champion-left-grid"></div>
+    <div class="champion-year-bg">2026</div>
+    <div class="champion-left-content">
+      <p class="champion-eyebrow">HGM Touren Mästare · 2026</p>
+      <h1 class="champion-title">Mikael<br><em>Ehrenborg</em></h1>
+      <div class="champion-desc">
+        För tredje gången tar Mikael hem titeln och befäster sin plats som HGM Tourens mest meriterade spelare. Tre titlar. Tre ögonblick av ren klass.
+        <div class="titles-row">
+          <span class="title-chip">🏆 2023</span>
+          <span class="title-chip">🏆 2025</span>
+          <span class="title-chip">🏆 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="champion-right">
+    <img class="champion-photo" src="/mastare/Mikael_2026.jpg" alt="Mikael Ehrenborg 2026"
+      onerror="this.outerHTML='<div class=champion-photo-placeholder><span>M</span></div>'">
+    <div class="champion-photo-overlay">
+      <div class="champion-photo-name">Mikael Ehrenborg</div>
+      <div class="champion-photo-year">Mästare 2026 · HGM Touren</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALL-TIME LEADERBOARD -->
+<section id="alltime">
+  <p class="section-label">Hall of Champions</p>
+  <h2 class="section-title">Flest titlar genom tiderna</h2>
+  <table class="alltime-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Spelare</th>
+        <th>Titlar</th>
+        <th>År</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="rank-num gold">1</span></td>
+        <td>Mikael Ehrenborg</td>
+        <td>
+          <div class="titles-dots">
+            <div class="title-dot filled"></div>
+            <div class="title-dot filled"></div>
+            <div class="title-dot filled"></div>
+          </div>
+        </td>
+        <td>2023 · 2025 · 2026</td>
+      </tr>
+      <tr>
+        <td><span class="rank-num silver">2</span></td>
+        <td>Hans Wahlberg</td>
+        <td>
+          <div class="titles-dots">
+            <div class="title-dot filled"></div>
+          </div>
+        </td>
+        <td>2024</td>
+      </tr>
+      <tr>
+        <td><span class="rank-num silver">2</span></td>
+        <td>Staffan Fritiofsson</td>
+        <td>
+          <div class="titles-dots">
+            <div class="title-dot filled"></div>
+          </div>
+        </td>
+        <td>2022</td>
+      </tr>
+      <tr>
+        <td><span class="rank-num silver">2</span></td>
+        <td>Lars Ambratt</td>
+        <td>
+          <div class="titles-dots">
+            <div class="title-dot filled"></div>
+          </div>
+        </td>
+        <td>2021</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- HISTORY GRID -->
+<section id="historik">
+  <p class="section-label">Mästare genom åren</p>
+  <h2 class="section-title">Historik</h2>
+  <div class="history-grid">
+
+    <div class="history-card">
+      <img src="/mastare/Mikael_2026.jpg" alt="2026"
+        onerror="this.outerHTML='<div class=history-card-placeholder><span>26</span></div>'">
+      <div class="history-overlay">
+        <div class="history-year">2026</div>
+        <div class="history-name">Mikael Ehrenborg</div>
+        <div class="history-badge">🏆 3× Mästare</div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <img src="/mastare/Mikael_2025.jpg" alt="2025"
+        onerror="this.outerHTML='<div class=history-card-placeholder><span>25</span></div>'">
+      <div class="history-overlay">
+        <div class="history-year">2025</div>
+        <div class="history-name">Mikael Ehrenborg</div>
+        <div class="history-badge">🏆 3× Mästare</div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <img src="/mastare/Hans_2024.jpg" alt="2024"
+        onerror="this.outerHTML='<div class=history-card-placeholder><span>24</span></div>'">
+      <div class="history-overlay">
+        <div class="history-year">2024</div>
+        <div class="history-name">Hans Wahlberg</div>
+        <div class="history-badge">🏆 1× Mästare</div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <img src="/mastare/Mikael_2023.jpg" alt="2023"
+        onerror="this.outerHTML='<div class=history-card-placeholder><span>23</span></div>'">
+      <div class="history-overlay">
+        <div class="history-year">2023</div>
+        <div class="history-name">Mikael Ehrenborg</div>
+        <div class="history-badge">🏆 3× Mästare</div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <img src="/mastare/Staffan_2022.jpg" alt="2022"
+        onerror="this.outerHTML='<div class=history-card-placeholder><span>22</span></div>'">
+      <div class="history-overlay">
+        <div class="history-year">2022</div>
+        <div class="history-name">Staffan Fritiofsson</div>
+        <div class="history-badge">🏆 1× Mästare</div>
+      </div>
+    </div>
+
+    <div class="history-card">
+      <img src="/mastare/Lars_2021.jpg" alt="2021"
+        onerror="this.outerHTML='<div class=history-card-placeholder><span>21</span></div>'">
+      <div class="history-overlay">
+        <div class="history-year">2021</div>
+        <div class="history-name">Lars Ambratt</div>
+        <div class="history-badge">🏆 1× Mästare</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">HGM Touren</div>
+  <div class="footer-right">
+    Hall of Champions<br>
+    hgmtouren.se
+  </div>
+</footer>
+
+</body>
+</html>
