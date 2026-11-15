@@ -3,1011 +3,699 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HGM Touren – All Swingers</title>
+<title>HGM Touren</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f5f2ec;
+    --cream-dark: #ede9e1;
+    --dark: #1a1a18;
+    --dark-mid: #2a2a26;
+    --green: #1e3d2a;
+    --green-mid: #2a5a3a;
+    --green-light: #4a8a5a;
+    --gold: #c9a227;
+    --gold-light: #e8c547;
+    --muted: #888880;
+    --border: #d8d3c8;
+    --lag-g: #5aaa75;
+    --lag-g-bg: #1a3020;
+    --lag-h: #c0607a;
+    --lag-h-bg: #301a20;
+    --nav-h: 72px;
+  }
 
-:root {
-  --cream:  #f5f2ec;
-  --dark:   #1a1a18;
-  --green:  #1e3d2a;
-  --green-mid: #2a5a3a;
-  --green-light: #4a8a5a;
-  --gold:   #c9a227;
-  --muted:  #888880;
-  --border: #d8d3c8;
-  --white:  #ffffff;
-  --lag-g-c: #5aaa75;
-  --lag-h-c: #c0607a;
-  --lag-g:  #1a3020;
-  --lag-h:  #301a20;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--dark);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-html { scroll-behavior: smooth; }
+  /* ── NAV ── */
+  #nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: var(--nav-h);
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid rgba(201,162,39,0.25);
+    transition: background 0.3s;
+  }
+  #nav.scrolled {
+    background: rgba(26,26,24,0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    display: flex; flex-direction: column; line-height: 1;
+    text-decoration: none; color: var(--cream);
+  }
+  .nav-logo-main {
+    font-size: 1.5rem; font-weight: 600;
+    letter-spacing: 0.08em; color: var(--gold);
+  }
+  .nav-logo-sub {
+    font-size: 0.6rem; font-family: 'DM Mono', monospace;
+    font-weight: 300; letter-spacing: 0.25em; color: var(--muted);
+    text-transform: uppercase; margin-top: 2px;
+  }
+  .nav-links { display: flex; gap: 0; list-style: none; }
+  .nav-links a {
+    display: block; padding: 0 16px;
+    height: var(--nav-h); line-height: var(--nav-h);
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(245,242,236,0.6); text-decoration: none;
+    transition: color 0.2s; border-bottom: 2px solid transparent;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--gold); border-bottom-color: var(--gold);
+  }
+  .nav-hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 8px;
+  }
+  .nav-hamburger span {
+    display: block; width: 24px; height: 1px;
+    background: var(--cream); transition: all 0.3s;
+  }
+  #mobile-menu {
+    display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+    background: var(--dark); z-index: 99;
+    border-bottom: 1px solid rgba(201,162,39,0.25);
+  }
+  #mobile-menu.open { display: block; }
+  #mobile-menu a {
+    display: block; padding: 16px 24px;
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(245,242,236,0.7); text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  #mobile-menu a:hover { color: var(--gold); }
 
-body {
-  font-family: 'DM Mono', monospace;
-  background: var(--cream);
-  color: var(--dark);
-  font-size: 14px;
-  line-height: 1.7;
-}
+  /* ── HERO ── */
+  #hem {
+    position: relative; height: 100vh; min-height: 600px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; overflow: hidden; background: var(--dark);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(26,26,24,0.4) 0%, rgba(26,26,24,0.7) 60%, rgba(26,26,24,0.95) 100%),
+      url('https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1600&q=80') center/cover no-repeat;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column;
+    align-items: center; padding: 0 24px;
+  }
+  .hero-est {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    font-weight: 300; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-size: clamp(4rem, 12vw, 9rem); font-weight: 600;
+    line-height: 0.9; color: var(--cream); letter-spacing: -0.01em;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title span { color: var(--gold); font-style: italic; }
+  .hero-tagline {
+    font-size: clamp(1rem, 2.5vw, 1.4rem); font-weight: 300;
+    color: rgba(245,242,236,0.6); letter-spacing: 0.08em;
+    margin-top: 20px; font-style: italic;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; margin-top: 48px;
+    flex-wrap: wrap; justify-content: center;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .btn-primary {
+    background: var(--gold); color: var(--dark);
+    padding: 14px 36px; font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; font-weight: 400; letter-spacing: 0.2em;
+    text-transform: uppercase; text-decoration: none; transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-secondary {
+    border: 1px solid rgba(245,242,236,0.3); color: var(--cream);
+    padding: 14px 36px; font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; font-weight: 300; letter-spacing: 0.2em;
+    text-transform: uppercase; text-decoration: none; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+  .hero-scroll {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: rgba(245,242,236,0.4); font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+    animation: pulse 2s infinite;
+  }
+  .hero-scroll::after {
+    content: ''; display: block; width: 1px; height: 32px;
+    background: rgba(245,242,236,0.3); animation: growLine 2s infinite;
+  }
 
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 60px; height: 68px;
-  background: rgba(30,61,42,0.97);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.nav-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 600; letter-spacing: 0.06em;
-  color: var(--cream); text-decoration: none;
-}
-.nav-logo em { font-style: italic; color: var(--gold); }
-.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
-.nav-links a {
-  text-decoration: none; color: rgba(245,242,236,0.7);
-  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 7px 14px; border-radius: 3px;
-  transition: background 0.2s, color 0.2s;
-}
-.nav-links a:hover { background: rgba(255,255,255,0.08); color: var(--cream); }
-.nav-cta {
-  background: var(--gold) !important; color: var(--green) !important;
-  margin-left: 8px;
-}
+  /* ── STAT STRIP ── */
+  .stat-strip {
+    background: var(--dark-mid);
+    border-top: 1px solid rgba(201,162,39,0.2);
+    border-bottom: 1px solid rgba(201,162,39,0.2);
+    padding: 28px 0; overflow: hidden;
+  }
+  .stat-strip-inner {
+    display: flex; justify-content: center; gap: 0; flex-wrap: wrap;
+    max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  }
+  .stat-item {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 12px 32px; border-right: 1px solid rgba(255,255,255,0.08);
+    min-width: 120px;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-size: 2.4rem; font-weight: 600; color: var(--gold); line-height: 1; }
+  .stat-label {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-top: 4px;
+  }
 
-/* ── HERO ── */
-.hero {
-  min-height: 100vh;
-  background: var(--green);
-  display: flex; align-items: flex-end;
-  padding: 100px 60px 90px;
-  position: relative; overflow: hidden;
-}
-.hero-bg {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 75% 15%, rgba(201,162,39,0.14) 0%, transparent 55%),
-    radial-gradient(ellipse at 10% 85%, rgba(74,138,90,0.22) 0%, transparent 50%);
-}
-.hero-grid {
-  position: absolute; inset: 0;
-  background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,0.03) 60px),
-    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,0.03) 60px);
-}
-.hero-inner { position: relative; z-index: 2; max-width: 740px; }
-.hero-tag {
-  display: inline-block; margin-bottom: 24px;
-  padding: 6px 16px;
-  background: var(--gold); color: var(--green);
-  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
-}
-.hero h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(64px, 11vw, 120px);
-  font-weight: 300; line-height: 0.92;
-  color: var(--cream);
-}
-.hero h1 em { font-style: italic; color: var(--gold); }
-.hero p {
-  margin-top: 28px; color: rgba(245,242,236,0.55);
-  font-size: 13px; max-width: 440px; line-height: 1.9;
-}
-.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 44px; }
-.btn {
-  display: inline-block; text-decoration: none;
-  padding: 13px 28px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-  border: 1px solid transparent; transition: all 0.2s;
-}
-.btn-gold { background: var(--gold); color: var(--green); }
-.btn-gold:hover { opacity: 0.9; }
-.btn-outline { border-color: rgba(245,242,236,0.3); color: var(--cream); }
-.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-.hero-divider {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
-  background: linear-gradient(to bottom right, var(--green) 50%, var(--cream) 50%);
-}
+  /* ── SHARED SECTION ── */
+  .section {
+    padding: 100px max(24px, env(safe-area-inset-left, 0px));
+    max-width: 1200px; margin: 0 auto;
+  }
+  .section-header { margin-bottom: 64px; }
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px; display: block;
+  }
+  .section-title {
+    font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 300;
+    line-height: 1.1; color: var(--dark); letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--green); }
+  .section-desc {
+    margin-top: 16px; font-size: 1.15rem; color: var(--muted);
+    max-width: 540px; line-height: 1.7;
+  }
 
-/* ── STATS BAR ── */
-.stats-bar {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  background: var(--white);
-  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-}
-.stat-box { padding: 36px 40px; text-align: center; border-right: 1px solid var(--border); }
-.stat-box:last-child { border-right: none; }
-.stat-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 56px; font-weight: 300; line-height: 1;
-  color: var(--dark); display: block;
-}
-.stat-label { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+  /* ── STATISTIK ── */
+  .standings-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+  .standings-card { background: var(--dark); overflow: hidden; }
+  .standings-title {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .standings-title h3 { font-size: 1.4rem; font-weight: 400; color: var(--cream); }
+  .standings-title span {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase;
+  }
+  .standings-list { list-style: none; }
+  .standing-row {
+    display: flex; align-items: center; padding: 10px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    gap: 12px; transition: background 0.15s;
+  }
+  .standing-row:hover { background: rgba(255,255,255,0.03); }
+  .standing-row:last-child { border-bottom: none; }
+  .standing-pos { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); width: 20px; text-align: right; flex-shrink: 0; }
+  .standing-pos.top3 { color: var(--gold); }
+  .standing-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--dark-mid); }
+  .standing-name { flex: 1; font-size: 1.05rem; font-weight: 400; color: var(--cream); }
+  .standing-lag { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .standing-lag.g { background: var(--lag-g); }
+  .standing-lag.h { background: var(--lag-h); }
+  .standing-pts { font-family: 'DM Mono', monospace; font-size: 0.85rem; font-weight: 400; color: var(--gold); text-align: right; min-width: 48px; }
+  .standing-bar-wrap { width: 60px; height: 3px; background: rgba(255,255,255,0.08); overflow: hidden; flex-shrink: 0; }
+  .standing-bar { height: 100%; background: var(--gold); transition: width 1s ease; width: 0; }
 
-/* ── SECTION ── */
-.section { padding: 90px 60px; }
-.section-tag {
-  display: inline-block; margin-bottom: 14px; padding: 4px 14px;
-  background: var(--gold); color: var(--green);
-  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-}
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(36px, 4vw, 56px); font-weight: 300; line-height: 1.05;
-  color: var(--dark); margin-bottom: 10px;
-}
-.section-sub { color: var(--muted); font-size: 13px; max-width: 520px; line-height: 1.8; }
-.section-header { margin-bottom: 52px; }
+  /* ── SPELARNA ── */
+  .players-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2px;
+  }
+  .player-card {
+    position: relative; aspect-ratio: 3/4; overflow: hidden;
+    cursor: pointer; background: var(--dark-mid);
+  }
+  .player-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s ease, filter 0.5s ease; filter: grayscale(20%);
+  }
+  .player-card:hover img { transform: scale(1.06); filter: grayscale(0%); }
+  .player-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,26,24,0.9) 0%, rgba(26,26,24,0.1) 50%, transparent 100%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 20px 16px 16px; transition: background 0.3s;
+  }
+  .player-card:hover .player-card-overlay {
+    background: linear-gradient(to top, rgba(26,26,24,0.95) 0%, rgba(26,26,24,0.4) 60%, rgba(26,26,24,0.1) 100%);
+  }
+  .player-nick { font-size: 1.3rem; font-weight: 600; color: var(--cream); line-height: 1.1; }
+  .player-name { font-size: 0.75rem; color: rgba(245,242,236,0.5); margin-top: 2px; display: none; }
+  .player-card:hover .player-name { display: block; }
+  .player-lag-badge {
+    position: absolute; top: 12px; right: 12px;
+    padding: 3px 8px; font-family: 'DM Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.15em;
+    text-transform: uppercase; font-weight: 400; border-radius: 2px;
+  }
+  .player-lag-badge.g { background: rgba(90,170,117,0.2); color: var(--lag-g); border: 1px solid rgba(90,170,117,0.4); }
+  .player-lag-badge.h { background: rgba(192,96,122,0.2); color: var(--lag-h); border: 1px solid rgba(192,96,122,0.4); }
 
-/* ── STÄLLNING ── */
-.standing-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2px;
-}
-.standing-row {
-  display: flex; align-items: center; gap: 16px; padding: 18px 20px;
-  border: 1px solid var(--border); background: var(--white); transition: border-color 0.2s;
-}
-.standing-row:hover { border-color: var(--green-light); }
-.standing-pos {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 36px; font-weight: 300; color: var(--muted); min-width: 40px; line-height: 1;
-}
-.standing-pos.gold   { color: var(--gold); }
-.standing-pos.silver { color: #a8aab4; }
-.standing-pos.bronze { color: #c47e3a; }
-.standing-name { flex: 1; }
-.standing-nickname {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px; font-weight: 400; line-height: 1.1; color: var(--dark);
-}
-.standing-fullname { font-size: 11px; color: var(--muted); }
-.standing-pts { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--green); }
-.standing-pts-lbl { font-size: 10px; color: var(--muted); text-align: right; }
-.lag-pill { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.lag-pill.G { background: var(--lag-g-c); }
-.lag-pill.H { background: var(--lag-h-c); }
+  /* ── LAGEN ── */
+  .lagen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 56px; }
+  .lag-panel { padding: 56px 48px; position: relative; overflow: hidden; }
+  .lag-panel.g { background: var(--lag-g-bg); border-top: 2px solid var(--lag-g); }
+  .lag-panel.h { background: var(--lag-h-bg); border-top: 2px solid var(--lag-h); }
+  .lag-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .lag-name { font-size: 3rem; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+  .lag-panel.g .lag-name { color: var(--lag-g); }
+  .lag-panel.h .lag-name { color: var(--lag-h); }
+  .lag-full { font-size: 1rem; color: rgba(245,242,236,0.4); font-style: italic; margin-bottom: 32px; }
+  .lag-kapten { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+  .lag-kapten img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+  .lag-kapten-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .lag-kapten-name { font-size: 1.1rem; font-weight: 400; color: var(--cream); margin-top: 2px; }
+  .lag-members { display: flex; flex-direction: column; gap: 10px; }
+  .lag-member { display: flex; align-items: center; gap: 10px; }
+  .lag-member img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; opacity: 0.85; }
+  .lag-member span { font-size: 1rem; color: rgba(245,242,236,0.75); }
+  .lag-score { position: absolute; top: 32px; right: 48px; text-align: right; }
+  .lag-score-num { font-size: 3.5rem; font-weight: 600; line-height: 1; }
+  .lag-panel.g .lag-score-num { color: rgba(90,170,117,0.3); }
+  .lag-panel.h .lag-score-num { color: rgba(192,96,122,0.3); }
+  .lag-score-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
 
-/* ── SENASTE RUNDAN TABLE ── */
-.lb-wrap { overflow-x: auto; margin-top: 32px; }
-.lb-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.lb-table th {
-  text-align: left; padding: 10px 16px;
-  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--white); background: var(--green); font-weight: 400;
-}
-.lb-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-.lb-table tr:hover td { background: rgba(201,162,39,0.04); }
-.lb-rank {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px; font-weight: 300; color: var(--muted);
-  min-width: 36px; display: inline-block;
-}
-.lb-rank.gold   { color: var(--gold); }
-.lb-rank.silver { color: #a8aab4; }
-.lb-rank.bronze { color: #c47e3a; }
-.lb-player { font-size: 14px; }
-.lb-player small { display: block; font-size: 11px; color: var(--muted); }
-.lb-score {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 300; color: var(--green);
-}
+  /* ── MÄSTARE ── */
+  .mastare-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; margin-top: 56px; }
+  .mastare-card { background: var(--dark-mid); padding: 36px 28px; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden; transition: background 0.2s; }
+  .mastare-card:hover { background: #2e2e2a; }
+  .mastare-card.featured {
+    background: linear-gradient(135deg, var(--green) 0%, var(--dark-mid) 100%);
+    border-top: 2px solid var(--gold);
+    grid-column: span 2;
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start;
+  }
+  .mastare-year { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; }
+  .mastare-nick { font-size: 2rem; font-weight: 600; color: var(--cream); line-height: 1.1; }
+  .mastare-info { font-size: 0.85rem; color: rgba(245,242,236,0.4); font-style: italic; }
+  .mastare-trophy { font-size: 3rem; opacity: 0.3; align-self: center; }
 
-/* ── SPELARE ── */
-.players-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 2px;
-}
-.player-card {
-  background: var(--white); border: 1px solid var(--border);
-  cursor: pointer; transition: border-color 0.2s, transform 0.15s;
-}
-.player-card:hover { border-color: var(--green-light); transform: translateY(-2px); }
-.player-photo {
-  width: 100%; aspect-ratio: 3/4; overflow: hidden; position: relative;
-  background: linear-gradient(135deg, #e8e4dc, #d8d3c8);
-}
-.player-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-.player-card:hover .player-photo img { transform: scale(1.04); }
-.player-lag-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
-.player-lag-bar.G { background: var(--lag-g-c); }
-.player-lag-bar.H { background: var(--lag-h-c); }
-.player-initials {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 60px; font-weight: 300; color: rgba(26,26,24,0.18);
-}
-.player-info { padding: 16px 18px 20px; }
-.player-nick {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 24px; font-weight: 400; line-height: 1.1; color: var(--dark);
-}
-.player-full { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
-.player-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 10px; font-size: 10px; letter-spacing: 0.1em;
-}
-.player-badge.G { background: var(--lag-g); color: var(--lag-g-c); }
-.player-badge.H { background: var(--lag-h); color: var(--lag-h-c); }
-.player-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  /* ── HISTORIK ── */
+  .timeline { position: relative; margin-top: 56px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .timeline-item {
+    display: flex; padding-bottom: 48px; padding-left: 32px;
+    position: relative; opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateY(0); }
+  .timeline-dot {
+    position: absolute; left: 0; top: 6px; transform: translateX(-50%);
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0; border: 2px solid var(--cream-dark);
+  }
+  .timeline-year { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .timeline-title { font-size: 1.5rem; font-weight: 400; color: var(--dark); margin-bottom: 8px; }
+  .timeline-desc { font-size: 1rem; color: var(--muted); line-height: 1.65; }
 
-/* ── LAGEN ── */
-.lag-section { background: var(--dark); padding: 90px 60px; }
-.lag-section .section-title { color: var(--cream); }
-.lag-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 52px; }
-.lag-panel { padding: 52px 48px; }
-.lag-panel.G { background: var(--lag-g); }
-.lag-panel.H { background: var(--lag-h); }
-.lag-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
-.lag-panel.G .lag-eyebrow { color: rgba(90,170,117,0.7); }
-.lag-panel.H .lag-eyebrow { color: rgba(192,96,122,0.7); }
-.lag-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 56px; font-weight: 300; line-height: 1; margin-bottom: 36px;
-}
-.lag-panel.G .lag-name { color: var(--lag-g-c); }
-.lag-panel.H .lag-name { color: var(--lag-h-c); }
-.lag-player {
-  display: flex; align-items: center; gap: 10px; padding: 11px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  font-size: 13px; color: rgba(245,242,236,0.65);
-}
-.lag-player:last-child { border-bottom: none; }
-.lag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.lag-panel.G .lag-dot { background: var(--lag-g-c); }
-.lag-panel.H .lag-dot { background: var(--lag-h-c); }
-.lag-smek { font-family: 'Cormorant Garamond', serif; font-size: 17px; color: rgba(245,242,236,0.9); }
-.lag-realname { font-size: 11px; color: rgba(245,242,236,0.35); margin-left: auto; }
+  /* ── FOOTER ── */
+  footer { background: var(--dark); padding: 64px 0 32px; border-top: 1px solid rgba(201,162,39,0.15); }
+  .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 max(24px, env(safe-area-inset-left, 0px)); }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 48px; margin-bottom: 48px; flex-wrap: wrap; }
+  .footer-logo { font-size: 2rem; font-weight: 600; color: var(--gold); letter-spacing: 0.08em; }
+  .footer-motto { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 4px; }
+  .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
+  .footer-col h4 { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .footer-col a { font-size: 0.95rem; color: rgba(245,242,236,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--cream); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-copy { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(245,242,236,0.25); text-transform: uppercase; }
+  .footer-contact a { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: var(--gold); text-decoration: none; text-transform: uppercase; }
+  .divider { height: 1px; background: var(--border); max-width: 1200px; margin: 0 auto; }
 
-/* ── MÄSTARE ── */
-.champion-wrap {
-  display: grid; grid-template-columns: 1fr 2fr;
-  border: 1px solid var(--border); max-width: 900px;
-}
-.champion-left {
-  background: var(--green); padding: 56px 48px;
-  display: flex; flex-direction: column; justify-content: space-between;
-  position: relative; overflow: hidden;
-}
-.champion-left-year {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 100px; font-weight: 300; line-height: 1;
-  color: rgba(201,162,39,0.18); position: absolute; bottom: 40px; right: 32px;
-  pointer-events: none;
-}
-.champion-eyebrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-.champion-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 44px; font-weight: 300; line-height: 1.0; color: var(--cream); margin-bottom: 14px;
-}
-.champion-sub { font-size: 12px; color: rgba(245,242,236,0.45); line-height: 1.7; }
-.champion-titles { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-.champion-title-chip {
-  padding: 5px 12px; border: 1px solid rgba(201,162,39,0.4);
-  color: var(--gold); font-size: 11px; letter-spacing: 0.08em;
-}
-.champion-right { background: var(--white); padding: 52px 48px; border-left: 1px solid var(--border); }
-.champion-right h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 24px; font-weight: 300; color: var(--dark);
-  margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
-}
-.prev-row { display: flex; align-items: center; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--border); }
-.prev-row:last-child { border-bottom: none; }
-.prev-year { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold); font-weight: 300; min-width: 50px; }
-.prev-name { flex: 1; font-size: 13px; }
-.prev-chip { font-size: 10px; letter-spacing: 0.08em; padding: 3px 10px; border: 1px solid var(--border); color: var(--muted); }
-.prev-chip.multi { border-color: rgba(201,162,39,0.5); color: var(--gold); }
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+  @keyframes growLine { 0%, 100% { transform: scaleY(0.5); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 0.8; } }
 
-/* ── HISTORIK ── */
-.historik-section { background: var(--dark); padding: 90px 60px; }
-.historik-section .section-title { color: var(--cream); }
-.timeline { position: relative; padding-left: 32px; max-width: 680px; margin-top: 52px; }
-.timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background: var(--green-light); opacity: 0.4; }
-.timeline-item { position: relative; margin-bottom: 56px; opacity: 0; transform: translateX(-10px); transition: opacity 0.6s, transform 0.6s; }
-.timeline-item.visible { opacity: 1; transform: none; }
-.timeline-dot { position: absolute; left: -38px; top: 7px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--dark); }
-.timeline-year { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
-.timeline-headline { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; color: var(--cream); margin-bottom: 12px; }
-.timeline-text { color: rgba(245,242,236,0.5); font-size: 13px; max-width: 540px; line-height: 1.8; }
-.timeline-badge { display: inline-block; margin-top: 14px; padding: 6px 16px; border: 1px solid var(--green-light); color: var(--green-light); font-size: 11px; letter-spacing: 0.08em; }
-
-/* ── STATISTIK PER ÅR ── */
-.stats-year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; }
-.stats-year-card {
-  background: var(--white); border: 1px solid var(--border); padding: 28px 24px;
-  transition: border-color 0.2s;
-}
-.stats-year-card:hover { border-color: var(--green-light); }
-.stats-year-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 48px; font-weight: 300; color: var(--gold); line-height: 1;
-}
-.stats-year-winner { font-size: 15px; font-family: 'Cormorant Garamond', serif; color: var(--dark); margin: 8px 0 4px; }
-.stats-year-smek { font-size: 11px; color: var(--muted); }
-
-/* ── FOOTER ── */
-footer {
-  background: var(--green); padding: 60px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-.footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--cream); font-weight: 300; }
-.footer-logo em { font-style: italic; color: var(--gold); }
-.footer-right { font-size: 11px; color: rgba(245,242,236,0.35); text-align: right; letter-spacing: 0.08em; line-height: 2; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  nav { padding: 0 24px; }
-  .hero, .section, .lag-section, .historik-section { padding: 80px 24px; }
-  .hero { padding-bottom: 100px; }
-  .stats-bar { grid-template-columns: 1fr 1fr; }
-  .stat-box:nth-child(2) { border-right: none; }
-  .champion-wrap { grid-template-columns: 1fr; }
-  .champion-right { border-left: none; border-top: 1px solid var(--border); }
-  .lag-split { grid-template-columns: 1fr; }
-  footer { flex-direction: column; gap: 20px; text-align: center; }
-  .footer-right { text-align: center; }
-}
-@media (max-width: 600px) {
-  .nav-links a { padding: 7px 8px; font-size: 10px; }
-}
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .standings-wrap { grid-template-columns: 1fr; }
+    .lagen-grid { grid-template-columns: 1fr; }
+    .mastare-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .lag-score { position: static; text-align: left; margin-bottom: 24px; }
+    .lag-panel { padding: 36px 28px; }
+  }
+  @media (max-width: 600px) {
+    .players-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-title { font-size: 3.5rem; }
+    .stat-item { padding: 12px 20px; min-width: 90px; }
+    .footer-top { flex-direction: column; }
+  }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">HGM <em>Touren</em></a>
+<nav id="nav">
+  <a href="#hem" class="nav-logo">
+    <span class="nav-logo-main">HGM</span>
+    <span class="nav-logo-sub">Touren · Est. 2021</span>
+  </a>
   <ul class="nav-links">
-    <li><a href="#sasong2026">2026</a></li>
-    <li><a href="#spelare">Spelare</a></li>
+    <li><a href="#hem" class="active">Hem</a></li>
+    <li><a href="#statistik">Statistik</a></li>
+    <li><a href="#spelarna">Spelarna</a></li>
     <li><a href="#lagen">Lagen</a></li>
     <li><a href="#mastare">Mästare</a></li>
-    <li><a href="#historik" class="nav-cta">Historik</a></li>
+    <li><a href="#historik">Historik</a></li>
   </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Meny">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
+<!-- MOBILE MENU -->
+<div id="mobile-menu">
+  <a href="#hem">Hem</a>
+  <a href="#statistik">Statistik</a>
+  <a href="#spelarna">Spelarna</a>
+  <a href="#lagen">Lagen</a>
+  <a href="#mastare">Mästare</a>
+  <a href="#historik">Historik</a>
+</div>
+
 <!-- HERO -->
-<div class="hero">
+<section id="hem">
   <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-inner">
-    <span class="hero-tag">Est. 2021 · All Swingers</span>
-    <h1>HGM<br><em>Touren</em></h1>
-    <p>Tävlingsresultat, statistik och minnen från år av fairways, gropar och oförglömliga ronder på de bästa banorna i Sverige.</p>
-    <div class="hero-btns">
-      <a href="#sasong2026" class="btn btn-gold">Säsong 2026</a>
-      <a href="#historik" class="btn btn-outline">Vår historia</a>
+  <div class="hero-content">
+    <span class="hero-est">Est. 2021 · All Swingers</span>
+    <h1 class="hero-title">HGM<br><span>Touren</span></h1>
+    <p class="hero-tagline">Sveriges hetaste privata golftour</p>
+    <div class="hero-cta">
+      <a href="#spelarna" class="btn-primary">Spelarna</a>
+      <a href="#statistik" class="btn-secondary">Statistik 2026</a>
     </div>
   </div>
-  <div class="hero-divider"></div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- STAT STRIP -->
+<div class="stat-strip">
+  <div class="stat-strip-inner">
+    <div class="stat-item"><span class="stat-num">14</span><span class="stat-label">Spelare</span></div>
+    <div class="stat-item"><span class="stat-num">6</span><span class="stat-label">Säsonger</span></div>
+    <div class="stat-item"><span class="stat-num">2</span><span class="stat-label">Lag</span></div>
+    <div class="stat-item"><span class="stat-num">221</span><span class="stat-label">Finalvinnare slag 2026</span></div>
+    <div class="stat-item"><span class="stat-num">2021</span><span class="stat-label">Grundat</span></div>
+  </div>
 </div>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat-box"><span class="stat-num">17</span><div class="stat-label">Säsonger</div></div>
-  <div class="stat-box"><span class="stat-num">15</span><div class="stat-label">Spelare</div></div>
-  <div class="stat-box"><span class="stat-num">8</span><div class="stat-label">Omgångar 2026</div></div>
-  <div class="stat-box"><span class="stat-num">2021</span><div class="stat-label">Grundat</div></div>
-</div>
-
-<!-- SÄSONG 2026 — STÄLLNING -->
-<section id="sasong2026" class="section" style="background:var(--white);">
-  <div class="section-header">
-    <span class="section-tag">Säsong 2026</span>
-    <h2 class="section-title">Aktuell ställning</h2>
-    <p class="section-sub">Top 6 av 8 grundomgångar räknas. Slutspel avgör mästare bland Top 6.</p>
-  </div>
-  <div class="standing-grid">
-
-    <div class="standing-row">
-      <span class="standing-pos gold">1</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Lufsen</div>
-        <div class="standing-fullname">Niclas Magnusson</div>
-      </div>
-      <div><div class="standing-pts">1 180</div><div class="standing-pts-lbl">Top 6</div></div>
+<!-- STATISTIK -->
+<section id="statistik">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">Säsong 2026</span>
+      <h2 class="section-title">Nuvarande<br><em>Ställning</em></h2>
+      <p class="section-desc">Poängen ackumuleras under hela säsongen. Varje omgång ger poäng baserat på nettoresultat.</p>
     </div>
-
-    <div class="standing-row">
-      <span class="standing-pos silver">2</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Frallan</div>
-        <div class="standing-fullname">Pelle Frank</div>
+    <div class="standings-wrap">
+      <div class="standings-card">
+        <div class="standings-title">
+          <h3 style="color:var(--lag-g)">Lag G</h3>
+          <span>GAY · Kapten Lufsen</span>
+        </div>
+        <ul class="standings-list">
+          <li class="standing-row"><span class="standing-pos top3">1</span><img src="/spelarna/Lufsen.jpg" class="standing-avatar" alt="Lufsen"><span class="standing-name">Lufsen</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="100"></div></div><span class="standing-pts">1180</span></li>
+          <li class="standing-row"><span class="standing-pos top3">2</span><img src="/spelarna/Frallan.jpg" class="standing-avatar" alt="Frallan"><span class="standing-name">Frallan</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="90"></div></div><span class="standing-pts">1065</span></li>
+          <li class="standing-row"><span class="standing-pos top3">3</span><img src="/spelarna/Ossa.jpg" class="standing-avatar" alt="Ossa"><span class="standing-name">Ossa</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="81"></div></div><span class="standing-pts">955</span></li>
+          <li class="standing-row"><span class="standing-pos">4</span><img src="/spelarna/EB.jpg" class="standing-avatar" alt="EB"><span class="standing-name">EB</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="80"></div></div><span class="standing-pts">945</span></li>
+          <li class="standing-row"><span class="standing-pos">9</span><img src="/spelarna/Kaka.jpg" class="standing-avatar" alt="Kaka"><span class="standing-name">Kaka</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="51"></div></div><span class="standing-pts">605</span></li>
+          <li class="standing-row"><span class="standing-pos">11</span><img src="/spelarna/Tamo.jpg" class="standing-avatar" alt="Tämo"><span class="standing-name">Tämo</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="43"></div></div><span class="standing-pts">503</span></li>
+          <li class="standing-row"><span class="standing-pos">12</span><img src="/spelarna/Sillen.jpg" class="standing-avatar" alt="Sillen"><span class="standing-name">Sillen</span><span class="standing-lag g"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="28"></div></div><span class="standing-pts">335</span></li>
+        </ul>
       </div>
-      <div><div class="standing-pts">1 065</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos bronze">3</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Ossa</div>
-        <div class="standing-fullname">Peter Olsson</div>
+      <div class="standings-card">
+        <div class="standings-title">
+          <h3 style="color:var(--lag-h)">Lag H</h3>
+          <span>HETRO · Kapten Översten</span>
+        </div>
+        <ul class="standings-list">
+          <li class="standing-row"><span class="standing-pos top3">5</span><img src="/spelarna/Oversten.jpg" class="standing-avatar" alt="Översten"><span class="standing-name">Översten</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="68"></div></div><span class="standing-pts">798</span></li>
+          <li class="standing-row"><span class="standing-pos top3">6</span><img src="/spelarna/Lillegubben.jpg" class="standing-avatar" alt="Lillegubben"><span class="standing-name">Lillegubben</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="61"></div></div><span class="standing-pts">725</span></li>
+          <li class="standing-row"><span class="standing-pos top3">7</span><img src="/spelarna/27an.jpg" class="standing-avatar" alt="27an"><span class="standing-name">27an</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="53"></div></div><span class="standing-pts">630</span></li>
+          <li class="standing-row"><span class="standing-pos">8</span><img src="/spelarna/Spikrak.jpg" class="standing-avatar" alt="Spikrak"><span class="standing-name">Spikrak</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="53"></div></div><span class="standing-pts">628</span></li>
+          <li class="standing-row"><span class="standing-pos">10</span><img src="/spelarna/Mike.jpg" class="standing-avatar" alt="Mike"><span class="standing-name">Mike</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="51"></div></div><span class="standing-pts">600</span></li>
+          <li class="standing-row"><span class="standing-pos">13</span><img src="/spelarna/Svagern.jpg" class="standing-avatar" alt="Svågern"><span class="standing-name">Svågern</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="26"></div></div><span class="standing-pts">305</span></li>
+          <li class="standing-row"><span class="standing-pos">14</span><img src="/spelarna/Elof.jpg" class="standing-avatar" alt="Elof"><span class="standing-name">Elof</span><span class="standing-lag h"></span><div class="standing-bar-wrap"><div class="standing-bar" data-pct="17"></div></div><span class="standing-pts">195</span></li>
+        </ul>
       </div>
-      <div><div class="standing-pts">955</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">4</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">EB</div>
-        <div class="standing-fullname">Anders Tumbygg</div>
-      </div>
-      <div><div class="standing-pts">945</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">5</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Översten</div>
-        <div class="standing-fullname">Mikael Ehrenborg</div>
-      </div>
-      <div><div class="standing-pts">798</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">6</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Lillegubben</div>
-        <div class="standing-fullname">Lars Ambratt</div>
-      </div>
-      <div><div class="standing-pts">725</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">7</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">27:an</div>
-        <div class="standing-fullname">Peter Olsson</div>
-      </div>
-      <div><div class="standing-pts">630</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">8</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Spikrak</div>
-        <div class="standing-fullname">Hasse Wahlberg</div>
-      </div>
-      <div><div class="standing-pts">628</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">9</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Kaka</div>
-        <div class="standing-fullname">Staffan Tumbygg</div>
-      </div>
-      <div><div class="standing-pts">605</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">10</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Mike</div>
-        <div class="standing-fullname">Mike</div>
-      </div>
-      <div><div class="standing-pts">600</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">11</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Tämo</div>
-        <div class="standing-fullname">Fabian Dahl</div>
-      </div>
-      <div><div class="standing-pts">503</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">12</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Sillen</div>
-        <div class="standing-fullname">Robert Sidlo</div>
-      </div>
-      <div><div class="standing-pts">335</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">13</span>
-      <span class="lag-pill H"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Svågern</div>
-        <div class="standing-fullname">Jonas Ahlberg</div>
-      </div>
-      <div><div class="standing-pts">305</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">14</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Pajken</div>
-        <div class="standing-fullname">Andreas Elofsson</div>
-      </div>
-      <div><div class="standing-pts">195</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-    <div class="standing-row">
-      <span class="standing-pos">15</span>
-      <span class="lag-pill G"></span>
-      <div class="standing-name">
-        <div class="standing-nickname">Elof</div>
-        <div class="standing-fullname">Andreas Elofsson</div>
-      </div>
-      <div><div class="standing-pts">—</div><div class="standing-pts-lbl">Top 6</div></div>
-    </div>
-
-  </div>
-
-  <!-- SENASTE RUNDAN -->
-  <div style="margin-top:72px;">
-    <span class="section-tag">Senaste rundan</span>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--dark);margin-bottom:4px;">Omgång 8 · 2026</h3>
-    <p class="section-sub" style="margin-bottom:0;">Uppdateras efter varje spelad omgång.</p>
-    <div class="lb-wrap">
-      <table class="lb-table">
-        <thead>
-          <tr>
-            <th>Plats</th>
-            <th>Spelare</th>
-            <th>Lag</th>
-            <th>Poäng</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="lb-rank gold">1</span></td>
-            <td class="lb-player">EB <small>Mikael Ehrenborg</small></td>
-            <td><span style="color:var(--lag-g-c);font-size:11px;">Lag G</span></td>
-            <td><span class="lb-score">—</span></td>
-          </tr>
-          <tr>
-            <td><span class="lb-rank silver">2</span></td>
-            <td class="lb-player">Spikrak <small>Hasse Wahlberg</small></td>
-            <td><span style="color:var(--lag-h-c);font-size:11px;">Lag H</span></td>
-            <td><span class="lb-score">—</span></td>
-          </tr>
-          <tr>
-            <td><span class="lb-rank bronze">3</span></td>
-            <td class="lb-player">27:an <small>Peter Olsson</small></td>
-            <td><span style="color:var(--lag-h-c);font-size:11px;">Lag H</span></td>
-            <td><span class="lb-score">—</span></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </section>
 
+<div class="divider"></div>
+
 <!-- SPELARNA -->
-<section id="spelare" class="section">
-  <div class="section-header">
-    <span class="section-tag">HGM Touren</span>
-    <h2 class="section-title">Spelarna</h2>
-    <p class="section-sub">15 spelare fördelade på Lag G (GAY) och Lag H (HETRO).</p>
+<section id="spelarna" style="background:var(--cream-dark);padding-top:100px;padding-bottom:0;">
+  <div class="section" style="padding-bottom:32px;">
+    <div class="section-header">
+      <span class="section-eyebrow">HGM Touren 2026</span>
+      <h2 class="section-title">Spelarnas<br><em>Trupp</em></h2>
+      <p class="section-desc">14 dedikerade golfare uppdelade i två rivaliserande lag. Hovra för att se fullständigt namn.</p>
+    </div>
   </div>
-  <div class="players-grid">
-
-    <!-- Spelare med bilder -->
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/Lufsen.jpg" alt="Lufsen" onerror="this.style.display='none'">
-        <div class="player-initials">L</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Lufsen</div>
-        <div class="player-full">Niclas Magnusson</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Frallan.jpg" alt="Frallan" onerror="this.style.display='none'">
-        <div class="player-initials">F</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Frallan</div>
-        <div class="player-full">Pelle Frank</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/Ossa.jpg" alt="Ossa" onerror="this.style.display='none'">
-        <div class="player-initials">O</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Ossa</div>
-        <div class="player-full">Peter Olsson</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/EB.jpg" alt="EB" onerror="this.style.display='none'">
-        <div class="player-initials">E</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">EB</div>
-        <div class="player-full">Anders Tumbygg</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Oversten.jpg" alt="Översten" onerror="this.style.display='none'">
-        <div class="player-initials">Ö</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Översten</div>
-        <div class="player-full">Mikael Ehrenborg</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G · 🏆 2026</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/Lillegubben.jpg" alt="Lillegubben" onerror="this.style.display='none'">
-        <div class="player-initials">L</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Lillegubben</div>
-        <div class="player-full">Lars Ambratt</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/27an.jpg" alt="27:an" onerror="this.style.display='none'">
-        <div class="player-initials">P</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">27:an</div>
-        <div class="player-full">Peter Olsson</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Spikrak.jpg" alt="Spikrak" onerror="this.style.display='none'">
-        <div class="player-initials">S</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Spikrak</div>
-        <div class="player-full">Hasse Wahlberg</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/Kaka.jpg" alt="Kaka" onerror="this.style.display='none'">
-        <div class="player-initials">K</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Kaka</div>
-        <div class="player-full">Staffan Tumbygg</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Mike.jpg" alt="Mike" onerror="this.style.display='none'">
-        <div class="player-initials">M</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Mike</div>
-        <div class="player-full">Mike</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/Tamo.jpg" alt="Tämo" onerror="this.style.display='none'">
-        <div class="player-initials">T</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Tämo</div>
-        <div class="player-full">Fabian Dahl</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Sillen.jpg" alt="Sillen" onerror="this.style.display='none'">
-        <div class="player-initials">S</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Sillen</div>
-        <div class="player-full">Robert Sidlo</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar H"></div>
-        <img src="/spelarna/Svagern.jpg" alt="Svågern" onerror="this.style.display='none'">
-        <div class="player-initials">S</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Svågern</div>
-        <div class="player-full">Jonas Ahlberg</div>
-        <span class="player-badge H"><span class="player-badge-dot"></span>Lag H</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Idioten.jpg" alt="Idioten" onerror="this.style.display='none'">
-        <div class="player-initials">I</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Idioten</div>
-        <div class="player-full">Andreas Elofsson</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
-    <div class="player-card">
-      <div class="player-photo">
-        <div class="player-lag-bar G"></div>
-        <img src="/spelarna/Elof.jpg" alt="Elof" onerror="this.style.display='none'">
-        <div class="player-initials">E</div>
-      </div>
-      <div class="player-info">
-        <div class="player-nick">Elof</div>
-        <div class="player-full">Andreas Elofsson</div>
-        <span class="player-badge G"><span class="player-badge-dot"></span>Lag G</span>
-      </div>
-    </div>
-
+  <div class="players-grid" style="max-width:1400px;margin:0 auto 100px;padding:0 2px;">
+    <div class="player-card"><img src="/spelarna/Lufsen.jpg" alt="Lufsen" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Lufsen</span><span class="player-name">Niclas Magnusson</span></div><span class="player-lag-badge g">Lag G · Kapten</span></div>
+    <div class="player-card"><img src="/spelarna/Ossa.jpg" alt="Ossa" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Ossa</span><span class="player-name">Oscar</span></div><span class="player-lag-badge g">Lag G</span></div>
+    <div class="player-card"><img src="/spelarna/Frallan.jpg" alt="Frallan" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Frallan</span><span class="player-name">Pelle Frank</span></div><span class="player-lag-badge g">Lag G</span></div>
+    <div class="player-card"><img src="/spelarna/Sillen.jpg" alt="Sillen" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Sillen</span><span class="player-name">Robert Sidlo</span></div><span class="player-lag-badge g">Lag G</span></div>
+    <div class="player-card"><img src="/spelarna/EB.jpg" alt="EB" loading="lazy"><div class="player-card-overlay"><span class="player-nick">EB</span><span class="player-name">Anders Tumbygg</span></div><span class="player-lag-badge g">Lag G</span></div>
+    <div class="player-card"><img src="/spelarna/Kaka.jpg" alt="Kaka" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Kaka</span><span class="player-name">Staffan Tumbygg</span></div><span class="player-lag-badge g">Lag G</span></div>
+    <div class="player-card"><img src="/spelarna/Tamo.jpg" alt="Tämo" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Tämo</span><span class="player-name">Fabian Dahl</span></div><span class="player-lag-badge g">Lag G</span></div>
+    <div class="player-card"><img src="/spelarna/Oversten.jpg" alt="Översten" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Översten</span><span class="player-name">Mikael Ehrenborg</span></div><span class="player-lag-badge h">Lag H · Kapten</span></div>
+    <div class="player-card"><img src="/spelarna/Spikrak.jpg" alt="Spikrak" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Spikrak</span><span class="player-name">Hasse Wahlberg</span></div><span class="player-lag-badge h">Lag H</span></div>
+    <div class="player-card"><img src="/spelarna/27an.jpg" alt="27an" loading="lazy"><div class="player-card-overlay"><span class="player-nick">27an</span><span class="player-name">Jesper Demén</span></div><span class="player-lag-badge h">Lag H</span></div>
+    <div class="player-card"><img src="/spelarna/Svagern.jpg" alt="Svågern" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Svågern</span><span class="player-name">Jonas Ahlberg</span></div><span class="player-lag-badge h">Lag H</span></div>
+    <div class="player-card"><img src="/spelarna/Mike.jpg" alt="Mike" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Mike</span><span class="player-name">Mike</span></div><span class="player-lag-badge h">Lag H</span></div>
+    <div class="player-card"><img src="/spelarna/Lillegubben.jpg" alt="Lillegubben" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Lillegubben</span><span class="player-name">Lars Ambratt</span></div><span class="player-lag-badge h">Lag H</span></div>
+    <div class="player-card"><img src="/spelarna/Elof.jpg" alt="Elof" loading="lazy"><div class="player-card-overlay"><span class="player-nick">Elof</span><span class="player-name">Andreas Elofsson</span></div><span class="player-lag-badge h">Lag H</span></div>
   </div>
 </section>
 
 <!-- LAGEN -->
-<section id="lagen" class="lag-section">
-  <span class="section-tag" style="background:rgba(201,162,39,0.15);color:var(--gold);">Säsong 2026</span>
-  <h2 class="section-title">Lagen</h2>
-  <div class="lag-split">
-    <div class="lag-panel G">
-      <div class="lag-eyebrow">GAY · Det gröna laget · Kapten: Lufsen</div>
-      <div class="lag-name">Lag G</div>
-      <div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Lufsen</span><span class="lag-realname">Niclas Magnusson</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Ossa</span><span class="lag-realname">Peter Olsson</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Frallan</span><span class="lag-realname">Pelle Frank</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Sillen</span><span class="lag-realname">Robert Sidlo</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">EB</span><span class="lag-realname">Anders Tumbygg</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Kaka</span><span class="lag-realname">Staffan Tumbygg</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Tämo</span><span class="lag-realname">Fabian Dahl</span></div>
+<section id="lagen" style="background:var(--dark);padding:100px 0;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 max(24px,env(safe-area-inset-left,0px));">
+    <div class="section-header">
+      <span class="section-eyebrow">Rivalerna</span>
+      <h2 class="section-title" style="color:var(--cream)">De Två<br><em style="color:var(--gold)">Lagen</em></h2>
+    </div>
+  </div>
+  <div class="lagen-grid" style="max-width:1200px;margin:0 auto;">
+    <div class="lag-panel g">
+      <div class="lag-score"><div class="lag-score-num">G</div><div class="lag-score-label">Vann laget 2026</div></div>
+      <div class="lag-label">Lag G</div>
+      <div class="lag-name">GAY</div>
+      <div class="lag-full">Gröna laget</div>
+      <div class="lag-kapten">
+        <img src="/spelarna/Lufsen.jpg" alt="Lufsen">
+        <div><div class="lag-kapten-label">Kapten</div><div class="lag-kapten-name">Lufsen</div></div>
+      </div>
+      <div class="lag-members">
+        <div class="lag-member"><img src="/spelarna/Ossa.jpg" alt="Ossa"><span>Ossa</span></div>
+        <div class="lag-member"><img src="/spelarna/Frallan.jpg" alt="Frallan"><span>Frallan</span></div>
+        <div class="lag-member"><img src="/spelarna/Sillen.jpg" alt="Sillen"><span>Sillen</span></div>
+        <div class="lag-member"><img src="/spelarna/EB.jpg" alt="EB"><span>EB</span></div>
+        <div class="lag-member"><img src="/spelarna/Kaka.jpg" alt="Kaka"><span>Kaka</span></div>
+        <div class="lag-member"><img src="/spelarna/Tamo.jpg" alt="Tämo"><span>Tämo</span></div>
       </div>
     </div>
-    <div class="lag-panel H">
-      <div class="lag-eyebrow">HETRO · Det röda laget · Kapten: Översten</div>
-      <div class="lag-name">Lag H</div>
-      <div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Översten</span><span class="lag-realname">Mikael Ehrenborg</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Spikrak</span><span class="lag-realname">Hasse Wahlberg</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">27:an</span><span class="lag-realname">Jesper Demén</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Svågern</span><span class="lag-realname">Jonas Ahlberg</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Mike</span><span class="lag-realname">Mike</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Lillegubben</span><span class="lag-realname">Lars Ambratt</span></div>
-        <div class="lag-player"><span class="lag-dot"></span><span class="lag-smek">Elof</span><span class="lag-realname">Andreas Elofsson</span></div>
+    <div class="lag-panel h">
+      <div class="lag-score"><div class="lag-score-num">H</div><div class="lag-score-label">Lag H</div></div>
+      <div class="lag-label">Lag H</div>
+      <div class="lag-name">HETRO</div>
+      <div class="lag-full">Röda laget</div>
+      <div class="lag-kapten">
+        <img src="/spelarna/Oversten.jpg" alt="Översten">
+        <div><div class="lag-kapten-label">Kapten</div><div class="lag-kapten-name">Översten</div></div>
+      </div>
+      <div class="lag-members">
+        <div class="lag-member"><img src="/spelarna/Spikrak.jpg" alt="Spikrak"><span>Spikrak</span></div>
+        <div class="lag-member"><img src="/spelarna/27an.jpg" alt="27an"><span>27an</span></div>
+        <div class="lag-member"><img src="/spelarna/Svagern.jpg" alt="Svågern"><span>Svågern</span></div>
+        <div class="lag-member"><img src="/spelarna/Mike.jpg" alt="Mike"><span>Mike</span></div>
+        <div class="lag-member"><img src="/spelarna/Lillegubben.jpg" alt="Lillegubben"><span>Lillegubben</span></div>
+        <div class="lag-member"><img src="/spelarna/Elof.jpg" alt="Elof"><span>Elof</span></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- MÄSTARE -->
-<section id="mastare" class="section">
-  <div class="section-header">
-    <span class="section-tag">Hall of Champions</span>
-    <h2 class="section-title">Mästare</h2>
+<section id="mastare">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">Hall of Fame</span>
+      <h2 class="section-title">HGM<br><em>Mästare</em></h2>
+      <p class="section-desc">Individuell mästare avgörs i ett slutspel. Vinnaren är den med lägst nettoresultat i finalen.</p>
+    </div>
+    <div class="mastare-grid">
+      <div class="mastare-card featured">
+        <div>
+          <div class="mastare-year">Mästare 2026 · Araslöv</div>
+          <div class="mastare-nick">Översten</div>
+          <div style="font-size:1rem;color:rgba(245,242,236,0.6);margin-top:8px;">Mikael Ehrenborg · 221 slag netto i finalen</div>
+          <div style="margin-top:16px;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;">
+            Bästa puttaren: Spikrak &nbsp;·&nbsp; Lilla rundan: Frallan
+          </div>
+        </div>
+        <div class="mastare-trophy">🏆</div>
+      </div>
+      <div class="mastare-card"><div class="mastare-year">2025</div><div class="mastare-nick">Lufsen</div><div class="mastare-info">Niclas Magnusson</div></div>
+      <div class="mastare-card"><div class="mastare-year">2024</div><div class="mastare-nick">Frallan</div><div class="mastare-info">Pelle Frank</div></div>
+      <div class="mastare-card"><div class="mastare-year">2023</div><div class="mastare-nick">Spikrak</div><div class="mastare-info">Hasse Wahlberg</div></div>
+      <div class="mastare-card"><div class="mastare-year">2022</div><div class="mastare-nick">Lufsen</div><div class="mastare-info">Niclas Magnusson</div></div>
+      <div class="mastare-card"><div class="mastare-year">2021</div><div class="mastare-nick">Lufsen</div><div class="mastare-info">Säsong 1 · Niclas Magnusson</div></div>
+    </div>
   </div>
-  <div class="champion-wrap">
-    <div class="champion-left">
-      <div class="champion-left-year">2026</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HISTORIK -->
+<section id="historik" style="background:var(--cream-dark)">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">Vår historia</span>
+      <h2 class="section-title">Från start<br><em>till nu</em></h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-year">2021 · Säsong 1</div><div class="timeline-title">HGM Touren grundas</div><div class="timeline-desc">En skara dedikerade golfare bestämmer sig för att skapa sin egen privata tour. HGM Touren föds — med eget poängsystem, lag och slutspel. Lufsen tar det allra första mästaretiteln.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-year">2022 · Säsong 2</div><div class="timeline-title">Lufsen försvarar titeln</div><div class="timeline-desc">Traditionen cementeras. Touren växer med fler omgångar och ökad rivalitet mellan Lag G och Lag H.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-year">2023 · Säsong 3</div><div class="timeline-title">Spikrak bryter dominansen</div><div class="timeline-desc">Hasse Wahlberg går hela vägen och tar sin första mästaretitel. Lag H börjar göra sig gällande på allvar.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-year">2024 · Säsong 4</div><div class="timeline-title">Frallan tar guldet</div><div class="timeline-desc">Pelle Frank spelar säsong i toppform och krönar sig till mästare. En av de jämnaste säsongerna hittills.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-year">2025 · Säsong 5</div><div class="timeline-title">Lufsen återtar tronen</div><div class="timeline-desc">Niclas Magnusson visar klassen och vinner sin tredje mästaretitel. Lag G dominerar poängtabellen.</div></div></div>
+      <div class="timeline-item"><div class="timeline-dot"></div><div><div class="timeline-year">2026 · Säsong 6</div><div class="timeline-title">Översten triumferar i Araslöv</div><div class="timeline-desc">Slutspelet avgörs på Araslöv. Mikael Ehrenborg "Översten" vinner finalen med ett imponerande nettoresultat på 221 slag. Lag G tar lagpokalen. Spikrak koras till bästa puttaren och Frallan vinner Lilla Rundan.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
       <div>
-        <div class="champion-eyebrow">HGM Touren Mästare 2026</div>
-        <div class="champion-name">Översten</div>
-        <div class="champion-sub">Vann finalen med 221 slag — lägst av alla finalister.<br>En suverän avslutning på säsongen.</div>
-        <div class="champion-titles">
-          <span class="champion-title-chip">🏆 2026 Final</span>
+        <div class="footer-logo">HGM Touren</div>
+        <div class="footer-motto">Est. 2021 · All Swingers</div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#hem">Hem</a></li>
+            <li><a href="#statistik">Statistik</a></li>
+            <li><a href="#spelarna">Spelarna</a></li>
+            <li><a href="#lagen">Lagen</a></li>
+            <li><a href="#mastare">Mästare</a></li>
+            <li><a href="#historik">Historik</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Lagen 2026</h4>
+          <ul>
+            <li><a href="#lagen" style="color:var(--lag-g)">Lag G – GAY</a></li>
+            <li><a href="#lagen" style="color:var(--lag-h)">Lag H – HETRO</a></li>
+          </ul>
         </div>
       </div>
     </div>
-    <div class="champion-right">
-      <h3>Mästarlistan</h3>
-      <div class="prev-row">
-        <span class="prev-year">2026</span>
-        <span class="prev-name">Översten <em style="font-style:italic;color:var(--muted);font-size:12px;">— Lag G</em></span>
-        <span class="prev-chip">🏆 Mästare</span>
-      </div>
-      <div class="prev-row">
-        <span class="prev-year">2025</span>
-        <span class="prev-name">EB <em style="font-style:italic;color:var(--muted);font-size:12px;">— Lag G</em></span>
-        <span class="prev-chip">🏆 Mästare</span>
-      </div>
-      <div class="prev-row">
-        <span class="prev-year">2024</span>
-        <span class="prev-name">Spikrak <em style="font-style:italic;color:var(--muted);font-size:12px;">— Lag G</em></span>
-        <span class="prev-chip">🏆 Mästare</span>
-      </div>
-      <div class="prev-row">
-        <span class="prev-year">2023</span>
-        <span class="prev-name">EB <em style="font-style:italic;color:var(--muted);font-size:12px;">— Lag G</em></span>
-        <span class="prev-chip">🏆 Mästare</span>
-      </div>
-      <div class="prev-row">
-        <span class="prev-year">2022</span>
-        <span class="prev-name">Kaka <em style="font-style:italic;color:var(--muted);font-size:12px;">— Lag G</em></span>
-        <span class="prev-chip">🏆 Mästare</span>
-      </div>
-      <div class="prev-row">
-        <span class="prev-year">2021</span>
-        <span class="prev-name">Lufsen <em style="font-style:italic;color:var(--muted);font-size:12px;">— Lag G</em></span>
-        <span class="prev-chip">🏆 Mästare</span>
-      </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 HGM Touren · All Swingers</span>
+      <div class="footer-contact"><a href="mailto:info@hgmtouren.se">info@hgmtouren.se</a></div>
     </div>
-  </div>
-
-  <!-- STATISTIK PER ÅR -->
-  <div style="margin-top:72px;">
-    <span class="section-tag">Statistik</span>
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--dark);margin-bottom:28px;">Mästare per år</h3>
-    <div class="stats-year-grid">
-      <div class="stats-year-card">
-        <div class="stats-year-num">2026</div>
-        <div class="stats-year-winner">Översten</div>
-        <div class="stats-year-smek">Lag G · 221 slag final</div>
-      </div>
-      <div class="stats-year-card">
-        <div class="stats-year-num">2025</div>
-        <div class="stats-year-winner">EB</div>
-        <div class="stats-year-smek">Lag G</div>
-      </div>
-      <div class="stats-year-card">
-        <div class="stats-year-num">2024</div>
-        <div class="stats-year-winner">Spikrak</div>
-        <div class="stats-year-smek">Lag G</div>
-      </div>
-      <div class="stats-year-card">
-        <div class="stats-year-num">2023</div>
-        <div class="stats-year-winner">EB</div>
-        <div class="stats-year-smek">Lag G</div>
-      </div>
-      <div class="stats-year-card">
-        <div class="stats-year-num">2022</div>
-        <div class="stats-year-winner">Kaka</div>
-        <div class="stats-year-smek">Lag G</div>
-      </div>
-      <div class="stats-year-card">
-        <div class="stats-year-num">2021</div>
-        <div class="stats-year-winner">Lufsen</div>
-        <div class="stats-year-smek">Niclas Magnusson · Lag G</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HISTORIK -->
-<section id="historik" class="historik-section">
-  <span class="section-tag" style="background:rgba(201,162,39,0.15);color:var(--gold);">Åren som gått</span>
-  <h2 class="section-title">Sällskapets historia</h2>
-  <div class="timeline">
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">2026 · Säsong 17</p>
-      <h3 class="timeline-headline">Översten vinner finalen</h3>
-      <p class="timeline-text">Översten tar sig till slutspelet som femma i grundomgångarna och levererar sedan ett mästarslagspel i finalen med 221 slag — lägst av samtliga finalister. En titel som förvånade många.</p>
-      <span class="timeline-badge">🏆 Mästare: Översten</span>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">2025 · Säsong 16</p>
-      <h3 class="timeline-headline">EB återtar kronan</h3>
-      <p class="timeline-text">Efter Hans Wahlbergs titelår 2024 är Mikael tillbaka på toppen. En stark säsong med imponerande konsistens från start till slutspel.</p>
-      <span class="timeline-badge">🏆 Mästare: Mikael Ehrenborg</span>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">2024 · Säsong 15</p>
-      <h3 class="timeline-headline">Wahlberg bryter serien</h3>
-      <p class="timeline-text">Hans Wahlberg — känd som både Spikrak och Idioten — tar sin första och hittills enda titel. En oväntat dramatisk säsongsavslutning ger Lag H anledning att fira.</p>
-      <span class="timeline-badge">🏆 Mästare: Hans Wahlberg</span>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">2023 · Säsong 14</p>
-      <h3 class="timeline-headline">Mikaels första titel</h3>
-      <p class="timeline-text">Mikael Ehrenborg tar sin första HGM Touren-titel. Ingen anar då att han ska vinna ytterligare två av de kommande tre säsongerna.</p>
-      <span class="timeline-badge">🏆 Mästare: Mikael Ehrenborg</span>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">2022 · Säsong 13</p>
-      <h3 class="timeline-headline">Staffan segrar</h3>
-      <p class="timeline-text">Staffan Fritiofsson — med smeknamnen Kaka och Svågern — kröns till mästare. En välförtjänt titel för ett av tourens mest igenkännbara ansikten.</p>
-      <span class="timeline-badge">🏆 Mästare: Staffan Fritiofsson</span>
-    </div>
-
-    <div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <p class="timeline-year">2021 · Säsong 1</p>
-      <h3 class="timeline-headline">Lufsen tar första titeln</h3>
-      <p class="timeline-text">Niclas Magnusson — känd som Lufsen och kapten för Lag G — vinner HGM Tourens allra första mästartitel. Starten på ett sällskap som bara skulle växa sig starkare.</p>
-      <span class="timeline-badge">🏆 Mästare: Lufsen</span>
-    </div>
-
-  </div>
-</section>
-
-<footer>
-  <div class="footer-logo">HGM <em>Touren</em></div>
-  <div class="footer-right">
-    All Swingers · Est. 2021<br>
-    hgmtouren.se
   </div>
 </footer>
 
 <script>
-const items = document.querySelectorAll('.timeline-item');
-const obs = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+  // Nav scroll + active link
+  const nav = document.getElementById('nav');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+    let current = 'hem';
+    document.querySelectorAll('section[id]').forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
   });
-}, { threshold: 0.1 });
-items.forEach(el => obs.observe(el));
+
+  // Hamburger
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.toggle('open');
+  });
+  document.querySelectorAll('#mobile-menu a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
+  });
+
+  // Smooth scroll for all anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        window.scrollTo({ top: target.offsetTop - 72, behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Animate standing bars + timeline on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.querySelectorAll('.standing-bar').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.pct + '%'; }, 100);
+      });
+      entry.target.querySelectorAll('.timeline-item').forEach((item, i) => {
+        setTimeout(() => item.classList.add('visible'), i * 120);
+      });
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.standings-card, section[id="historik"]').forEach(el => io.observe(el));
 </script>
+
 </body>
 </html>
