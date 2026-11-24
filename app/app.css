@@ -1,6 +1,6 @@
 :root {
   --bg: #f3f1ea; --surface: #fff; --surface-2: #ebe8df; --ink: #0f1d16; --ink-2: #44514a; --muted: #7c8781;
-  --line: #dcd8cc; --forest: #0d2a1e; --forest-2: #143a2a; --accent: #c8f169; --accent-ink: #13220f;
+  --line: #dcd8cc; --forest: #003d1d; --forest-2: #005a2b; --accent: #8fd13a; --accent-ink: #13220f;
   --team-g: #2ea866; --team-h: #e0506a;
   --birdie: #2563eb; --eagle: #7c3aed; --bogey: #b45309; --double: #b91c1c;
   --display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
@@ -153,3 +153,36 @@ table.sc { border-collapse: separate; border-spacing: 0; font-size: .82rem; back
 @keyframes up { from { transform: translateY(40px); opacity: 0; } }
 
 .toast { position: fixed; left: 50%; bottom: calc(96px + var(--safe-b)); transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 18px; border-radius: 999px; font-weight: 600; font-size: .9rem; z-index: 30; white-space: nowrap; }
+
+/* ── Inmatning av totaler ── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chipb { padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 600; font-size: .92rem; }
+.chipb.on { background: var(--forest); border-color: var(--forest); color: #fff; }
+.ptabs { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px 12px; padding: 2px 16px 6px; scrollbar-width: none; }
+.ptabs::-webkit-scrollbar { display: none; }
+.ptab { flex: none; display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); font-weight: 600; font-size: .9rem; }
+.ptab img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+.ptab.on { border-color: var(--forest); box-shadow: inset 0 0 0 1px var(--forest); }
+.ptab .ok { width: 18px; height: 18px; border-radius: 50%; background: var(--team-g); color: #fff; font-size: .65rem; display: grid; place-items: center; }
+.who-card { display: flex; align-items: center; gap: 14px; padding: 16px; margin-bottom: 12px; }
+.who-card img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+.who-card b { font-family: var(--display); font-size: 1.4rem; display: block; line-height: 1.1; }
+.who-card small { color: var(--muted); }
+.stat { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 16px; }
+.stat + .stat { margin-top: 10px; }
+.stat .lbl { flex: 1; min-width: 0; }
+.stat .lbl b { display: block; }
+.stat .lbl small { color: var(--muted); font-size: .8rem; }
+.stat .val { width: 64px; border-radius: 14px; font-size: 1.6rem; }
+.stat .val.set { background: #eef7e0; color: var(--forest); }
+.sheet input.big { width: 100%; text-align: center; font-family: var(--display); font-size: 2.6rem; font-weight: 800; padding: 14px; border-radius: 16px; border: 2px solid var(--line); background: var(--surface); margin-bottom: 12px; }
+.res { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border-radius: 16px; overflow: hidden; font-size: .9rem; }
+.res th, .res td { padding: 10px 6px; text-align: center; border-bottom: 1px solid var(--surface-2); font-variant-numeric: tabular-nums; }
+.res th { background: var(--forest); color: #fff; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.res td:first-child, .res th:first-child { text-align: left; padding-left: 14px; }
+.res td.win { color: var(--forest); font-weight: 800; background: #eef7e0; }
+.winners { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.win-card { padding: 14px; }
+.win-card small { display: block; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.win-card b { font-family: var(--display); font-size: 1.15rem; display: block; margin-top: 2px; }
+.win-card span { color: var(--ink-2); font-size: .85rem; }

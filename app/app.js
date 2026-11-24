@@ -1,13 +1,22 @@
 /* =========================================================
-   HGM Resultat – mobilapp för att föra in score på banan.
+   HGM Resultat – rapportera rundans totaler från mobilen.
+   Per spelare och runda: netto, Lilla Rundan, puttar,
+   närmast hål och längsta drive.
    Allt sparas lokalt i telefonen (localStorage) tills en
    gemensam databas kopplas på. Se README för nästa steg.
    ========================================================= */
 (function () {
   const H = window.HGM;
-  const KEY_ACTIVE = "hgm.active", KEY_ROUNDS = "hgm.rounds", KEY_COURSES = "hgm.courses";
-  const DEFAULT_PAR = [4, 4, 3, 5, 4, 4, 3, 4, 5, 4, 3, 4, 5, 4, 4, 3, 4, 5];
-  const DEFAULT_IDX = [7, 1, 15, 11, 3, 9, 17, 5, 13, 8, 16, 2, 12, 4, 10, 18, 6, 14];
+  const KEY_ACTIVE = "hgm.report", KEY_SAVED = "hgm.reports";
+
+  /* Vad som rapporteras per spelare. best: "low" = lägst vinner, "high" = högst vinner, "sum" = antal */
+  const FIELDS = [
+    { id: "netto", name: "Nettoscore",    hint: "Slag efter handicap · lägst vinner", start: 72, best: "low",  short: "Netto" },
+    { id: "lilla", name: "Lilla Rundan",  hint: "Poäng sista 6 hålen · högst vinner",  start: 12, best: "high", short: "LR" },
+    { id: "putt",  name: "Puttar",        hint: "Totalt antal · lägst vinner",         start: 32, best: "low",  short: "Putt" },
+    { id: "nh",    name: "Närmast hål",   hint: "Antal vinster denna runda",           start: 0,  best: "sum",  short: "NH" },
+    { id: "ld",    name: "Längsta drive", hint: "Antal vinster denna runda",           start: 0,  best: "sum",  short: "LD" }
+  ];
 
   const $view = document.getElementById("view");
   const $sub = document.getElementById("top-sub"), $main = document.getElementById("top-main");
@@ -21,57 +30,17 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { toast("Kunde inte spara i telefonen"); } },
     del(k) { try { localStorage.removeItem(k); } catch {} }
   };
-
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const img = id => `../assets/img/spelare/${H.byId(id).img}.jpg`;
   const nick = id => H.byId(id).nick;
-  const fmtName = id => (H.formats.find(f => f.id === id) || {}).name || id;
   const today = () => new Date().toISOString().slice(0, 10);
-  const sum = a => a.reduce((s, v) => s + (v || 0), 0);
 
-  let round = store.get(KEY_ACTIVE, null);
-  let draft = null; // under uppstart
-  const save = () => store.set(KEY_ACTIVE, round);
-
-  /* ── Beräkningar ── */
-  // Antal extraslag på ett hål. Plushandicap (negativ) ger tillbaka slag på de lättaste hålen.
-  const received = (hcp, idx) => hcp >= 0
-    ? Math.floor(hcp / 18) + (idx <= hcp % 18 ? 1 : 0)
-    : (idx > 18 + hcp ? -1 : 0);
-  function stats(r, pid) {
-    const p = r.players.find(x => x.id === pid), s = r.scores[pid];
-    let gross = 0, par = 0, rec = 0, pts = 0, played = 0;
-    s.forEach((v, i) => {
-      if (v == null) return;
-      const st = received(p.hcp, r.index[i]);
-      played++; gross += v; par += r.par[i]; rec += st;
-      pts += Math.max(0, r.par[i] + st - v + 2);
-    });
-    return { gross, net: gross - rec, toPar: gross - par, netToPar: gross - rec - par, pts, played,
-      out: sum(s.slice(0, 9)), in: sum(s.slice(9)) };
-  }
-  const rel = n => n === 0 ? "E" : (n > 0 ? "+" + n : "−" + Math.abs(n));
-  function cls(v, par) {
-    if (v == null) return "empty";
-    const d = v - par;
-    return d <= -2 ? "eagle" : d === -1 ? "birdie" : d === 0 ? "par" : d === 1 ? "bogey" : "double";
-  }
-  function leaderboard(r) {
-    const rows = r.players.map(p => ({ id: p.id, hcp: p.hcp, ...stats(r, p.id) }));
-    if (r.format === "stableford") rows.sort((a, b) => b.pts - a.pts || a.net - b.net);
-    else rows.sort((a, b) => a.netToPar - b.netToPar || b.pts - a.pts);
-    return rows;
-  }
+  let rep = store.get(KEY_ACTIVE, null);
+  const save = () => store.set(KEY_ACTIVE, rep);
 
   /* ── UI-hjälp ── */
-  function toast(msg) {
-    $toast.textContent = msg; $toast.hidden = false;
-    clearTimeout(toast.t); toast.t = setTimeout(() => $toast.hidden = true, 2200);
-  }
-  function sheet(html, bind) {
-    $sheet.innerHTML = html; $sheet.hidden = false; $sheetBg.hidden = false;
-    if (bind) bind($sheet);
-  }
+  function toast(msg) { $toast.textContent = msg; $toast.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => $toast.hidden = true, 2200); }
+  function sheet(html, bind) { $sheet.innerHTML = html; $sheet.hidden = false; $sheetBg.hidden = false; bind && bind($sheet); }
   function closeSheet() { $sheet.hidden = true; $sheetBg.hidden = true; }
   $sheetBg.addEventListener("click", closeSheet);
   function header(sub, main, menu) { $sub.textContent = sub; $main.textContent = main; $menu.hidden = !menu; }
@@ -79,271 +48,254 @@
   const ICON = {
     plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
     share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>',
-    left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
-    card: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M9 4v16"/></svg>'
+    left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>'
   };
+
+  const complete = e => e.netto != null && e.lilla != null && e.putt != null;
+
+  /* Dagens vinnare per kategori (delade placeringar tas med) */
+  function winners(r) {
+    const out = {};
+    FIELDS.forEach(f => {
+      const vals = r.entries.filter(e => e[f.id] != null && (f.best !== "sum" || e[f.id] > 0));
+      if (!vals.length) { out[f.id] = null; return; }
+      const best = f.best === "low" ? Math.min(...vals.map(e => e[f.id])) : Math.max(...vals.map(e => e[f.id]));
+      out[f.id] = { value: best, ids: f.best === "sum" ? vals.map(e => e.id) : vals.filter(e => e[f.id] === best).map(e => e.id) };
+    });
+    return out;
+  }
+  const byNetto = r => [...r.entries].sort((a, b) => (a.netto ?? 999) - (b.netto ?? 999));
 
   /* =======================================================
      VY: Start
      ======================================================= */
   function viewHome() {
     header("HGM Touren " + H.season, "Resultat", false);
-    const rounds = store.get(KEY_ROUNDS, []);
+    const saved = store.get(KEY_SAVED, []);
     $view.innerHTML = `
-      ${round ? `
+      ${rep ? `
         <button class="card item" id="resume" style="margin-bottom:14px">
-          <div class="grow"><b>${esc(round.course)}</b><small>${fmtName(round.format)} · ${round.players.map(p => nick(p.id)).join(", ")}</small></div>
+          <div class="grow"><b>${esc(rep.round)} · ${esc(rep.course)}</b><small>${rep.entries.map(e => nick(e.id)).join(", ")}</small></div>
           <span class="pill live">● Pågår</span>
         </button>` : ""}
       <div class="hero-card">
-        <small style="color:var(--accent);font-weight:700;letter-spacing:.1em;font-size:.72rem">NY RUNDA</small>
-        <h2>Dags att slå ut?</h2>
-        <p>Välj bana, spelform och vilka som går i bollen. Sedan knappar du in slagen hål för hål.</p>
-        <button class="btn btn-accent" id="new">${ICON.plus} Starta ny runda</button>
+        <small style="color:var(--accent);font-weight:700;letter-spacing:.1em;font-size:.72rem">RAPPORTERA</small>
+        <h2>Rundan klar?</h2>
+        <p>Välj omgång och spelare, och fyll i netto, Lilla Rundan, puttar, närmast hål och längsta drive.</p>
+        <button class="btn btn-accent" id="new">${ICON.plus} Rapportera runda</button>
       </div>
-      <span class="label">Sparade rundor</span>
+      <span class="label">Sparade rapporter</span>
       <div class="list">
-        ${rounds.length ? rounds.slice().reverse().map((r, i) => {
-          const lb = leaderboard(r)[0];
-          return `<button class="card item" data-open="${rounds.length - 1 - i}">
-            <div class="grow"><b>${esc(r.course)}</b><small>${r.date} · ${fmtName(r.format)} · ${r.players.length} spelare</small></div>
-            <span class="pill">🏆 ${nick(lb.id)}</span></button>`;
-        }).join("") : `<div class="card item"><small>Inga sparade rundor än. De dyker upp här när du avslutat en runda.</small></div>`}
+        ${saved.length ? saved.map((r, i) => ({ r, i })).reverse().map(({ r, i }) => {
+          const w = byNetto(r)[0];
+          return `<button class="card item" data-open="${i}">
+            <div class="grow"><b>${esc(r.round)} · ${esc(r.course)}</b><small>${r.date} · ${r.entries.length} spelare</small></div>
+            <span class="pill">🏆 ${nick(w.id)}</span></button>`;
+        }).join("") : `<div class="card item"><small>Inga sparade rapporter än. De dyker upp här när du sparat en runda.</small></div>`}
       </div>`;
     document.getElementById("new").onclick = () => {
-      if (round && !confirm("Du har en pågående runda. Vill du kasta den och starta en ny?")) return;
-      draft = { course: "", date: today(), format: "netto", players: [], par: DEFAULT_PAR.slice(), index: DEFAULT_IDX.slice() };
-      viewSetup();
+      if (rep && !confirm("Du har en påbörjad rapport. Vill du kasta den och börja om?")) return;
+      viewSetup({ round: guessRound(), course: "", date: today(), ids: store.get("hgm.lastIds", []) });
     };
-    const r = document.getElementById("resume"); if (r) r.onclick = () => viewHole();
-    $view.querySelectorAll("[data-open]").forEach(b => b.onclick = () => viewCard(store.get(KEY_ROUNDS, [])[+b.dataset.open], true));
+    const r = document.getElementById("resume"); if (r) r.onclick = () => viewEntry();
+    $view.querySelectorAll("[data-open]").forEach(b => b.onclick = () => viewReview(store.get(KEY_SAVED, [])[+b.dataset.open], true));
+  }
+  function guessRound() {
+    const done = store.get(KEY_SAVED, []).map(r => r.round);
+    return H.rounds.find(x => !done.includes(x)) || H.rounds[0];
   }
 
   /* =======================================================
-     VY: Ny runda
+     VY: Välj omgång, bana och spelare
      ======================================================= */
-  function viewSetup() {
-    header("Ny runda", "Inställningar", false);
-    const courses = store.get(KEY_COURSES, {});
+  function viewSetup(d) {
+    header("Ny rapport", "Omgång & spelare", false);
     const ranked = H.ranked();
     $view.innerHTML = `
-      <span class="label" style="margin-top:4px">Bana & datum</span>
-      <input class="field" id="course" list="courses" placeholder="T.ex. Araslöv" value="${esc(draft.course)}" autocomplete="off">
-      <datalist id="courses">${Object.keys(courses).map(c => `<option value="${esc(c)}">`).join("")}</datalist>
-      <div style="height:10px"></div>
-      <input class="field" id="date" type="date" value="${draft.date}">
+      <span class="label" style="margin-top:4px">Omgång</span>
+      <div class="chips">${H.rounds.map(r => `<button class="chipb ${r === d.round ? "on" : ""}" data-round="${esc(r)}">${esc(r)}</button>`).join("")}</div>
 
-      <span class="label">Spelform</span>
-      <div class="formats">${H.formats.map(f => `
-        <button class="opt ${draft.format === f.id ? "on" : ""}" data-fmt="${f.id}"><span class="radio"></span>
-        <span><b>${f.name}</b><small>${f.desc}</small></span></button>`).join("")}</div>
+      <span class="label">Bana</span>
+      <div class="chips" style="margin-bottom:10px">${H.courses.map(c => `<button class="chipb ${c === d.course ? "on" : ""}" data-course="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+      <input class="field" id="course" placeholder="…eller skriv annan bana" value="${H.courses.includes(d.course) ? "" : esc(d.course)}" autocomplete="off">
 
-      <span class="label">Spelare i bollen <span id="cnt" style="color:var(--ink)"></span></span>
+      <span class="label">Datum</span>
+      <input class="field" id="date" type="date" value="${d.date}">
+
+      <span class="label">Spelare att rapportera för <span id="cnt" style="color:var(--ink)"></span></span>
       <div class="roster">${ranked.map(p => `
         <button class="pick" data-pid="${p.id}"><span class="n"></span><img src="${img(p.id)}" alt=""><b>${esc(p.nick)}</b></button>`).join("")}</div>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:10px">Välj bara dig själv, eller hela bollen om du för protokoll åt alla.</p>
 
-      <div id="hcp-wrap"></div>
       <div class="dock"><div class="dock-inner">
         <button class="btn btn-line sq" id="cancel" aria-label="Tillbaka">${ICON.left}</button>
-        <button class="btn btn-dark" id="start">Starta rundan</button>
+        <button class="btn btn-dark" id="start">Fyll i resultat</button>
       </div></div>`;
 
+    $view.querySelectorAll("[data-round]").forEach(b => b.onclick = () => {
+      d.round = b.dataset.round; $view.querySelectorAll("[data-round]").forEach(x => x.classList.toggle("on", x === b));
+    });
     const courseEl = document.getElementById("course");
+    $view.querySelectorAll("[data-course]").forEach(b => b.onclick = () => {
+      d.course = b.dataset.course; courseEl.value = "";
+      $view.querySelectorAll("[data-course]").forEach(x => x.classList.toggle("on", x === b));
+    });
     courseEl.oninput = () => {
-      draft.course = courseEl.value;
-      const c = courses[courseEl.value.trim()];
-      if (c) { draft.par = c.par.slice(); draft.index = c.index.slice(); toast("Banans par & index hämtade"); }
+      d.course = courseEl.value; $view.querySelectorAll("[data-course]").forEach(x => x.classList.remove("on"));
     };
-    document.getElementById("date").onchange = e => draft.date = e.target.value;
-    $view.querySelectorAll("[data-fmt]").forEach(b => b.onclick = () => {
-      draft.format = b.dataset.fmt;
-      $view.querySelectorAll("[data-fmt]").forEach(x => x.classList.toggle("on", x === b));
-    });
+    document.getElementById("date").onchange = e => d.date = e.target.value;
+    const refresh = () => {
+      $view.querySelectorAll("[data-pid]").forEach(b => {
+        const i = d.ids.indexOf(b.dataset.pid);
+        b.classList.toggle("on", i >= 0); b.querySelector(".n").textContent = i + 1;
+      });
+      document.getElementById("cnt").textContent = d.ids.length ? `· ${d.ids.length} valda` : "";
+    };
     $view.querySelectorAll("[data-pid]").forEach(b => b.onclick = () => {
-      const id = b.dataset.pid, i = draft.players.findIndex(p => p.id === id);
-      if (i >= 0) draft.players.splice(i, 1); else draft.players.push({ id, hcp: lastHcp(id) });
-      vibrate(); refreshPicks();
+      const i = d.ids.indexOf(b.dataset.pid);
+      i >= 0 ? d.ids.splice(i, 1) : d.ids.push(b.dataset.pid); vibrate(); refresh();
     });
-    document.getElementById("cancel").onclick = () => { draft = null; viewHome(); };
+    document.getElementById("cancel").onclick = viewHome;
     document.getElementById("start").onclick = () => {
-      draft.course = courseEl.value.trim();
-      if (!draft.course) { toast("Skriv in vilken bana ni spelar"); courseEl.focus(); return; }
-      if (!draft.players.length) { toast("Välj minst en spelare"); return; }
-      round = { id: Date.now().toString(36), ...draft, scores: {}, cur: 0, started: new Date().toISOString() };
-      round.players.forEach(p => round.scores[p.id] = Array(18).fill(null));
-      draft = null; save(); viewHole();
+      d.course = (d.course || "").trim();
+      if (!d.course) { toast("Välj eller skriv in bana"); return; }
+      if (!d.ids.length) { toast("Välj minst en spelare"); return; }
+      store.set("hgm.lastIds", d.ids);
+      rep = { id: Date.now().toString(36), round: d.round, course: d.course, date: d.date, cur: 0,
+        entries: d.ids.map(id => ({ id, netto: null, lilla: null, putt: null, nh: 0, ld: 0 })) };
+      save(); viewEntry();
     };
-    refreshPicks();
-  }
-  function lastHcp(id) {
-    const rs = store.get(KEY_ROUNDS, []);
-    for (let i = rs.length - 1; i >= 0; i--) { const p = rs[i].players.find(x => x.id === id); if (p) return p.hcp; }
-    return 18;
-  }
-  function refreshPicks() {
-    $view.querySelectorAll("[data-pid]").forEach(b => {
-      const i = draft.players.findIndex(p => p.id === b.dataset.pid);
-      b.classList.toggle("on", i >= 0); b.querySelector(".n").textContent = i + 1;
-    });
-    document.getElementById("cnt").textContent = draft.players.length ? `· ${draft.players.length} valda` : "";
-    document.getElementById("hcp-wrap").innerHTML = draft.players.length ? `
-      <span class="label">Spelhandicap (antal slag)</span>
-      <div class="hcp-list">${draft.players.map(p => `
-        <div class="card hcp"><img src="${img(p.id)}" alt=""><b>${esc(nick(p.id))}</b>
-        <input type="number" inputmode="numeric" min="-10" max="54" value="${p.hcp}" data-hcp="${p.id}" aria-label="Handicap ${esc(nick(p.id))}"></div>`).join("")}</div>` : "";
-    $view.querySelectorAll("[data-hcp]").forEach(inp => inp.oninput = () => {
-      const p = draft.players.find(x => x.id === inp.dataset.hcp); p.hcp = parseInt(inp.value, 10) || 0;
-    });
+    refresh();
   }
 
   /* =======================================================
-     VY: Hål för hål
+     VY: Fyll i totaler, en spelare i taget
      ======================================================= */
-  function viewHole() {
-    const r = round, h = r.cur, par = r.par[h];
-    header(`${r.course} · ${fmtName(r.format)}`, `Hål ${h + 1}`, true);
+  function viewEntry() {
+    const e = rep.entries[rep.cur], last = rep.cur === rep.entries.length - 1;
+    const p = H.byId(e.id);
+    header(`${rep.round} · ${rep.course}`, `${p.nick} · ${rep.cur + 1}/${rep.entries.length}`, true);
     $view.innerHTML = `
-      <div class="holes" id="holes">${r.par.map((_, i) => {
-        const done = r.players.every(p => r.scores[p.id][i] != null);
-        return `<button class="hdot ${i === h ? "cur" : done ? "done" : ""}" data-go="${i}">${i + 1}</button>`;
-      }).join("")}</div>
-
-      <div class="card holehead">
-        <div class="num">${h + 1}<small>${h < 9 ? "Ut" : "In"}</small></div>
-        <div class="meta">
-          <button class="meta-btn" id="set-par"><small>Par</small><b>${par}</b></button>
-          <button class="meta-btn" id="set-idx"><small>Index</small><b>${r.index[h]}</b></button>
-        </div>
-      </div>
-
-      <div class="scores">${r.players.map(p => {
-        const v = r.scores[p.id][h], st = stats(r, p.id), extra = received(p.hcp, r.index[h]);
-        return `<div class="card score">
-          <img src="${img(p.id)}" alt="">
-          <div class="who"><b>${esc(nick(p.id))}${extra ? ` <span style="color:var(--muted);font-weight:500">${"•".repeat(extra)}</span>` : ""}</b>
-            <small>${st.played ? `${st.gross} slag · ${rel(st.netToPar)} netto · ${st.pts} p` : `Hcp ${p.hcp}`}</small></div>
+      ${rep.entries.length > 1 ? `<div class="ptabs">${rep.entries.map((x, i) => `
+        <button class="ptab ${i === rep.cur ? "on" : ""}" data-go="${i}"><img src="${img(x.id)}" alt="">${esc(nick(x.id))}${complete(x) ? '<span class="ok">✓</span>' : ""}</button>`).join("")}</div>` : ""}
+      <div class="card who-card"><img src="${img(e.id)}" alt="">
+        <div><b>${esc(p.nick)}</b><small>${H.teams[p.team].name} · ${esc(rep.round)}</small></div></div>
+      ${FIELDS.map(f => {
+        const v = e[f.id], set = v != null && !(f.best === "sum" && v === 0);
+        return `<div class="card stat">
+          <div class="lbl"><b>${f.name}</b><small>${f.hint}</small></div>
           <div class="stepper">
-            <button class="step" data-dec="${p.id}" aria-label="Minska">−</button>
-            <button class="val ${cls(v, par)}" data-num="${p.id}">${v ?? "–"}</button>
-            <button class="step" data-inc="${p.id}" aria-label="Öka">+</button>
+            <button class="step" data-dec="${f.id}" aria-label="Minska ${f.name}">−</button>
+            <button class="val ${v == null ? "empty" : set ? "set" : ""}" data-num="${f.id}">${v ?? "–"}</button>
+            <button class="step" data-inc="${f.id}" aria-label="Öka ${f.name}">+</button>
           </div></div>`;
-      }).join("")}</div>
-      <p style="text-align:center;color:var(--muted);font-size:.8rem;margin-top:14px">Prickarna visar extraslag på hålet. Tryck på siffran för att välja direkt.</p>
+      }).join("")}
+      <p style="text-align:center;color:var(--muted);font-size:.8rem;margin-top:14px">Tryck på siffran för att skriva in den direkt.</p>
 
       <div class="dock"><div class="dock-inner">
-        <button class="btn btn-line sq" id="prev" ${h === 0 ? "disabled" : ""} aria-label="Föregående hål">${ICON.left}</button>
-        <button class="btn btn-line sq" id="card" aria-label="Scorekort">${ICON.card}</button>
-        <button class="btn btn-dark" id="next">${h === 17 ? "Visa resultat" : `Nästa hål →`}</button>
+        <button class="btn btn-line sq" id="prev" aria-label="Tillbaka">${ICON.left}</button>
+        <button class="btn btn-dark" id="next">${last ? "Granska & spara" : `Nästa: ${esc(nick(rep.entries[rep.cur + 1].id))} →`}</button>
       </div></div>`;
 
-    const setScore = (pid, v) => { r.scores[pid][h] = v; save(); vibrate(); viewHole(); };
+    const set = (fid, v) => { e[fid] = v; save(); vibrate(); viewEntry(); };
+    const F = id => FIELDS.find(f => f.id === id);
     $view.querySelectorAll("[data-inc]").forEach(b => b.onclick = () => {
-      const v = r.scores[b.dataset.inc][h]; setScore(b.dataset.inc, v == null ? par : Math.min(15, v + 1));
+      const f = F(b.dataset.inc), v = e[f.id]; set(f.id, v == null ? f.start : Math.min(199, v + 1));
     });
     $view.querySelectorAll("[data-dec]").forEach(b => b.onclick = () => {
-      const v = r.scores[b.dataset.dec][h]; setScore(b.dataset.dec, v == null ? par - 1 : Math.max(1, v - 1));
+      const f = F(b.dataset.dec), v = e[f.id]; set(f.id, v == null ? Math.max(0, f.start - 1) : Math.max(0, v - 1));
     });
     $view.querySelectorAll("[data-num]").forEach(b => b.onclick = () => {
-      const pid = b.dataset.num, cur = r.scores[pid][h];
-      sheet(`<h3>${esc(nick(pid))} · hål ${h + 1}</h3>
-        <div class="numpad">${Array.from({ length: 12 }, (_, i) => i + 1).map(n => `<button class="${n === cur ? "on" : ""}" data-n="${n}">${n}</button>`).join("")}
-        <button data-n="" style="grid-column:span 4;font-size:1rem">Rensa</button></div>`, s => {
-        s.querySelectorAll("[data-n]").forEach(x => x.onclick = () => { closeSheet(); setScore(pid, x.dataset.n ? +x.dataset.n : null); });
+      const f = F(b.dataset.num);
+      sheet(`<h3>${f.name} · ${esc(p.nick)}</h3>
+        <input class="big" id="numin" type="number" inputmode="numeric" min="0" max="199" value="${e[f.id] ?? ""}" placeholder="${f.start}">
+        <div class="dock-inner"><button class="btn btn-line" id="clr" style="flex:0 0 35%">Rensa</button><button class="btn btn-dark" id="ok">Klar</button></div>`, s => {
+        const inp = s.querySelector("#numin"); setTimeout(() => inp.focus(), 50);
+        const ok = () => { const n = parseInt(inp.value, 10); closeSheet(); set(f.id, isNaN(n) ? (f.best === "sum" ? 0 : null) : Math.max(0, Math.min(199, n))); };
+        s.querySelector("#ok").onclick = ok;
+        inp.onkeydown = ev => { if (ev.key === "Enter") ok(); };
+        s.querySelector("#clr").onclick = () => { closeSheet(); set(f.id, f.best === "sum" ? 0 : null); };
       });
     });
-    $view.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { r.cur = +b.dataset.go; save(); viewHole(); });
-    document.getElementById("set-par").onclick = () => sheet(`<h3>Par på hål ${h + 1}</h3>
-      <div class="numpad">${[3, 4, 5, 6].map(n => `<button class="${n === par ? "on" : ""}" data-p="${n}">${n}</button>`).join("")}</div>`,
-      s => s.querySelectorAll("[data-p]").forEach(x => x.onclick = () => { r.par[h] = +x.dataset.p; save(); closeSheet(); viewHole(); }));
-    document.getElementById("set-idx").onclick = () => sheet(`<h3>Index (svårighet) hål ${h + 1}</h3>
-      <div class="numpad">${Array.from({ length: 18 }, (_, i) => i + 1).map(n => `<button class="${n === r.index[h] ? "on" : ""}" data-i="${n}">${n}</button>`).join("")}</div>`,
-      s => s.querySelectorAll("[data-i]").forEach(x => x.onclick = () => { r.index[h] = +x.dataset.i; save(); closeSheet(); viewHole(); }));
-    document.getElementById("prev").onclick = () => { r.cur--; save(); viewHole(); };
-    document.getElementById("card").onclick = () => viewCard(r, false);
-    document.getElementById("next").onclick = () => {
-      if (h === 17) return viewCard(r, false);
-      r.cur++; save(); viewHole(); window.scrollTo(0, 0);
+    $view.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { rep.cur = +b.dataset.go; save(); viewEntry(); });
+    document.getElementById("prev").onclick = () => {
+      if (rep.cur > 0) { rep.cur--; save(); viewEntry(); } else viewHome();
     };
-    const cur = document.querySelector(".hdot.cur"); if (cur) cur.scrollIntoView({ inline: "center", block: "nearest" });
+    document.getElementById("next").onclick = () => {
+      if (last) return viewReview(rep, false);
+      rep.cur++; save(); viewEntry(); window.scrollTo(0, 0);
+    };
   }
 
   $menu.onclick = () => {
-    if (!round) return;
-    sheet(`<h3>Rundan</h3><div class="list">
-      <button class="card item" data-a="card"><div class="grow"><b>Scorekort & ledartavla</b></div></button>
-      <button class="card item" data-a="finish"><div class="grow"><b>Avsluta & spara rundan</b><small>Sparas i telefonen</small></div></button>
-      <button class="card item" data-a="home"><div class="grow"><b>Till startsidan</b><small>Rundan ligger kvar och kan återupptas</small></div></button>
-      <button class="card item" data-a="discard"><div class="grow"><b style="color:var(--double)">Kasta rundan</b></div></button>
+    if (!rep) return;
+    sheet(`<h3>Rapporten</h3><div class="list">
+      <button class="card item" data-a="review"><div class="grow"><b>Granska & spara</b></div></button>
+      <button class="card item" data-a="home"><div class="grow"><b>Till startsidan</b><small>Rapporten ligger kvar och kan fortsättas</small></div></button>
+      <button class="card item" data-a="discard"><div class="grow"><b style="color:var(--double)">Kasta rapporten</b></div></button>
     </div>`, s => s.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
       closeSheet();
       const a = b.dataset.a;
-      if (a === "card") viewCard(round, false);
-      if (a === "finish") finish();
+      if (a === "review") viewReview(rep, false);
       if (a === "home") viewHome();
-      if (a === "discard" && confirm("Kasta rundan? Alla inslagna resultat försvinner.")) { round = null; store.del(KEY_ACTIVE); viewHome(); }
+      if (a === "discard" && confirm("Kasta rapporten? Inmatade resultat försvinner.")) { rep = null; store.del(KEY_ACTIVE); viewHome(); }
     }));
   };
 
   function finish() {
-    const missing = round.players.some(p => round.scores[p.id].some(v => v == null));
-    if (missing && !confirm("Alla hål är inte ifyllda. Spara ändå?")) return;
-    const rounds = store.get(KEY_ROUNDS, []);
-    rounds.push({ ...round, finished: new Date().toISOString() });
-    store.set(KEY_ROUNDS, rounds);
-    const courses = store.get(KEY_COURSES, {});
-    courses[round.course] = { par: round.par, index: round.index };
-    store.set(KEY_COURSES, courses);
-    const saved = round; round = null; store.del(KEY_ACTIVE);
-    toast("Rundan är sparad ✓");
-    viewCard(saved, true);
+    const missing = rep.entries.filter(e => !complete(e)).map(e => nick(e.id));
+    if (missing.length && !confirm(`Netto, Lilla Rundan eller puttar saknas för ${missing.join(", ")}. Spara ändå?`)) return;
+    const saved = store.get(KEY_SAVED, []);
+    saved.push({ ...rep, saved: new Date().toISOString() });
+    store.set(KEY_SAVED, saved);
+    const done = rep; rep = null; store.del(KEY_ACTIVE);
+    toast("Rapporten är sparad ✓");
+    viewReview(done, true);
   }
 
   /* =======================================================
-     VY: Scorekort / ledartavla
+     VY: Granska
      ======================================================= */
-  function viewCard(r, archived, tab = "lb") {
-    header(`${r.course} · ${r.date}`, archived ? "Resultat" : "Ställning", !archived);
-    const lb = leaderboard(r);
-    const stab = r.format === "stableford";
-    const cell = (v, par) => { if (v == null) return "<td>·</td>"; const d = v - par; return `<td class="${d <= -2 ? "e" : d === -1 ? "b" : d >= 2 ? "d" : ""}">${v}</td>`; };
-    const half = (from) => r.par.slice(from, from + 9);
+  function viewReview(r, archived) {
+    header(`${r.round} · ${r.date}`, archived ? r.course : "Granska", !archived);
+    const w = winners(r);
+    const winText = f => w[f.id] ? w[f.id].ids.map(nick).join(", ") : "–";
+    const rows = byNetto(r);
     $view.innerHTML = `
-      <div class="tabs"><button class="tab ${tab === "lb" ? "on" : ""}" data-tab="lb">Ledartavla</button><button class="tab ${tab === "sc" ? "on" : ""}" data-tab="sc">Scorekort</button></div>
-      ${tab === "lb" ? `
-        <div class="lb">${lb.map((x, i) => `
-          <div class="card lb-row"><span class="pos">${i + 1}</span><img src="${img(x.id)}" alt="">
-            <div class="grow"><b>${esc(nick(x.id))}</b><br><small>${x.gross} brutto · hcp ${x.hcp} · ${x.played}/18 hål</small></div>
-            <div class="big">${stab ? `<b>${x.pts}</b><small>poäng</small>` : `<b>${rel(x.netToPar)}</b><small>${x.net} netto</small>`}</div>
-          </div>`).join("")}</div>
-        <p style="color:var(--muted);font-size:.82rem;margin-top:10px">Sorterat på ${stab ? "poäng (Stableford)" : "nettoresultat mot par"}.</p>`
-      : `
-        ${[0, 9].map(from => `
-          <div class="sc-wrap" style="margin-bottom:12px"><table class="sc">
-            <tr><th>${from ? "In" : "Ut"}</th>${half(from).map((_, i) => `<th>${from + i + 1}</th>`).join("")}<th>Σ</th></tr>
-            <tr class="par"><td>Par</td>${half(from).map(p => `<td>${p}</td>`).join("")}<td class="sum">${sum(half(from))}</td></tr>
-            ${r.players.map(p => { const s = r.scores[p.id].slice(from, from + 9);
-              return `<tr><td>${esc(nick(p.id))}</td>${s.map((v, i) => cell(v, r.par[from + i])).join("")}<td class="sum">${sum(s) || "·"}</td></tr>`; }).join("")}
-          </table></div>`).join("")}`}
+      ${r.entries.length > 1 ? `<div class="winners">${FIELDS.slice(0, 3).map(f => `
+        <div class="card win-card"><small>${f.name}</small><b>${esc(winText(f))}</b><span>${w[f.id] ? w[f.id].value + (f.id === "lilla" ? " p" : f.id === "putt" ? " puttar" : " slag") : ""}</span></div>`).join("")}
+        <div class="card win-card"><small>NH / LD</small><b style="font-size:1rem">${esc(winText(FIELDS[3]))} / ${esc(winText(FIELDS[4]))}</b></div>
+      </div>` : ""}
+      <table class="res">
+        <tr><th>Spelare</th>${FIELDS.map(f => `<th>${f.short}</th>`).join("")}</tr>
+        ${rows.map(e => `<tr><td><b>${esc(nick(e.id))}</b></td>${FIELDS.map(f => {
+          const win = r.entries.length > 1 && w[f.id] && f.best !== "sum" && w[f.id].ids.includes(e.id);
+          return `<td class="${win ? "win" : ""}">${e[f.id] ?? "·"}</td>`;
+        }).join("")}</tr>`).join("")}
+      </table>
+      <p style="color:var(--muted);font-size:.8rem;margin-top:8px">LR = Lilla Rundan · NH = närmast hål · LD = längsta drive. Sorterat på netto.</p>
 
-      <div class="notice">ℹ️ <span>Resultaten sparas i den här telefonen. Inskickning till hemsidans tabell kopplas på när databasen är på plats – tills dess kan ni dela scorekortet.</span></div>
+      <div class="notice">ℹ️ <span>Rapporten sparas i den här telefonen. Inskickning till hemsidans ställning kopplas på när databasen är på plats – tills dess kan ni dela den i gruppchatten.</span></div>
 
       <div class="dock"><div class="dock-inner">
         <button class="btn btn-line sq" id="back" aria-label="Tillbaka">${ICON.left}</button>
         <button class="btn btn-line sq" id="share" aria-label="Dela">${ICON.share}</button>
-        ${archived ? `<button class="btn btn-dark" id="home">Klar</button>` : `<button class="btn btn-accent" id="finish">Avsluta & spara</button>`}
+        ${archived ? `<button class="btn btn-dark" id="home">Klar</button>` : `<button class="btn btn-accent" id="finish">Spara rapporten</button>`}
       </div></div>`;
-
-    $view.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => viewCard(r, archived, b.dataset.tab));
-    document.getElementById("back").onclick = () => archived ? viewHome() : viewHole();
+    document.getElementById("back").onclick = () => archived ? viewHome() : viewEntry();
     document.getElementById("share").onclick = () => share(r);
     const f = document.getElementById("finish"); if (f) f.onclick = finish;
     const hm = document.getElementById("home"); if (hm) hm.onclick = viewHome;
   }
 
   async function share(r) {
-    const lb = leaderboard(r), stab = r.format === "stableford";
-    const text = [`⛳ HGM Touren – ${r.course}, ${r.date}`, `${fmtName(r.format)}`, "",
-      ...lb.map((x, i) => `${i + 1}. ${nick(x.id)} – ${stab ? x.pts + " p" : rel(x.netToPar) + " netto (" + x.net + ")"} · ${x.gross} brutto`),
+    const w = winners(r);
+    const line = e => `${nick(e.id)}: netto ${e.netto ?? "–"} · LR ${e.lilla ?? "–"} · puttar ${e.putt ?? "–"}${e.nh ? ` · NH ${e.nh}` : ""}${e.ld ? ` · LD ${e.ld}` : ""}`;
+    const text = [`⛳ HGM Touren – ${r.round}`, `${r.course}, ${r.date}`, "",
+      ...byNetto(r).map(line),
+      ...(r.entries.length > 1 ? ["", `🏆 Netto: ${w.netto ? w.netto.ids.map(nick).join(", ") : "–"}`,
+        `🎯 Puttar: ${w.putt ? w.putt.ids.map(nick).join(", ") : "–"}`,
+        `⛳ Lilla Rundan: ${w.lilla ? w.lilla.ids.map(nick).join(", ") : "–"}`] : []),
       "", "hgmtouren.se"].join("\n");
     try {
       if (navigator.share) { await navigator.share({ text }); return; }
@@ -352,7 +304,7 @@
   }
 
   /* Start */
-  round ? viewHole() : viewHome();
+  rep ? viewEntry() : viewHome();
 
   /* Offline-stöd */
   if ("serviceWorker" in navigator && location.protocol === "https:") {

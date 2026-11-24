@@ -75,18 +75,19 @@
   }
 
   function duelCard() {
-    const g = H.teamTotal("G"), h = H.teamTotal("H");
-    const gp = (g / (g + h) * 100).toFixed(1);
+    const f = H.teamFinal, num = v => parseFloat(String(v).replace(",", "."));
+    const gp = (num(f.G) / (num(f.G) + num(f.H)) * 100).toFixed(1);
     return `<div class="card duel">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <h3>Lagkampen ${H.season}</h3>
+        <h3>Lagtävlingen ${H.season}</h3>
         <span class="badge gold">🏆 ${H.teams[H.teamWinner].name} vann</span>
       </div>
       <div class="duel-score">
-        <div><b style="color:var(--team-g)">${g.toLocaleString("sv-SE")}</b><span>Lag G · ${H.teams.G.nick}</span></div>
-        <div style="text-align:right"><b style="color:var(--team-h)">${h.toLocaleString("sv-SE")}</b><span>Lag H · ${H.teams.H.nick}</span></div>
+        <div><b style="color:var(--team-g)">${f.G}</b><span>Lag G · ${H.teams.G.nick}</span></div>
+        <div style="text-align:right"><b style="color:var(--team-h)">${f.H}</b><span>Lag H · ${H.teams.H.nick}</span></div>
       </div>
       <div class="duel-bar"><i style="width:${gp}%"></i><i style="flex:1"></i></div>
+      <p style="font-size:.9rem;color:var(--ink-2)">Matchspel Lag G mot Lag H. ${esc(f.text)}</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.9rem;color:var(--ink-2)">
         <div>Kapten <b>${H.byId(H.teams.G.captain).nick}</b></div>
         <div style="text-align:right">Kapten <b>${H.byId(H.teams.H.captain).nick}</b></div>
@@ -134,7 +135,7 @@
     return `<div class="card team ${t}">
       <div class="team-head">
         <div><h3>${team.name}</h3><small>${team.nick} · Kapten ${H.byId(team.captain).nick}</small></div>
-        <div class="team-total"><b>${H.teamTotal(t).toLocaleString("sv-SE")}</b><small>poäng</small></div>
+        <div class="team-total"><b>${H.teamTotal(t).toLocaleString("sv-SE")}</b><small>indiv. poäng</small></div>
       </div>
       ${standingsRows(list)}
     </div>`;
@@ -154,6 +155,8 @@
   fill("[data-duel]", duelCard());
   fill("[data-champ-feature]", champFeature());
   fill("[data-teams]", teamCard("G") + teamCard("H"));
+  fill("[data-formats]", H.formats.map(f => `<div class="card fmt reveal"><h3>${esc(f.name)}</h3><p>${esc(f.desc)}</p></div>`).join(""));
+  fill("[data-rules]", H.rules.map(r => `<li>${esc(r)}</li>`).join(""));
   fill("[data-players]", playerCards(ranked));
   document.querySelectorAll("[data-season]").forEach(el => el.textContent = H.season);
 

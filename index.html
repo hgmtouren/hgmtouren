@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>HGM Touren</title>
 <meta name="description" content="HGM Touren – Sveriges hetaste privata golftour. Ställning, spelare, lag och mästare.">
-<meta name="theme-color" content="#0d2a1e">
+<meta name="theme-color" content="#003d1d">
 <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +33,7 @@
   <div class="wrap">
     <div class="section-head">
       <div><span class="eyebrow">Säsong <span data-season></span></span><h2>Ställningen</h2>
-      <p>Poängen ackumuleras under hela säsongen. Varje omgång ger poäng baserat på nettoresultat.</p></div>
+      <p>Placeringspoäng varje omgång – 250 poäng till 1:an och nedåt. Bästa 6 av 8 omgångar räknas.</p></div>
       <a class="link-more" href="stallning/">Hela tabellen →</a>
     </div>
     <div class="grid-2">
@@ -42,6 +42,17 @@
         <div class="reveal" data-duel></div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head">
+      <div><span class="eyebrow">Tävlingsformer</span><h2>Så spelar vi</h2>
+      <p>Varje omgång avgörs i flera tävlingar samtidigt – individuellt och lag mot lag.</p></div>
+    </div>
+    <div class="formats-grid" data-formats></div>
+    <ul class="card rules" data-rules></ul>
   </div>
 </section>
 
@@ -61,9 +72,9 @@
       <div>
         <span class="eyebrow">Nytt · Resultatappen</span>
         <h2>För in scoren direkt på banan.</h2>
-        <p>Öppna appen i mobilen, välj spelare och knappa in slagen hål för hål. Netto och poäng räknas ut automatiskt.</p>
+        <p>Efter rundan matar du in netto, Lilla Rundan, puttar, närmast hål och längsta drive – för dig själv eller hela bollen.</p>
         <ul>
-          <li>Hela bollen på samma telefon</li>
+          <li>Klart på en minut efter rundan</li>
           <li>Fungerar även med dålig täckning</li>
           <li>Dela scorekortet direkt i gruppchatten</li>
         </ul>
@@ -71,11 +82,12 @@
       </div>
       <div class="phone" aria-hidden="true">
         <div class="phone-screen">
-          <div class="ps-top"><small>Hål 7 · Par 4 · Index 3</small><b>Araslöv</b></div>
-          <div class="ps-row">Översten<span class="ps-step"><i>−</i><em>4</em><i>+</i></span></div>
-          <div class="ps-row">Lufsen<span class="ps-step"><i>−</i><em>5</em><i>+</i></span></div>
-          <div class="ps-row">Spikrak<span class="ps-step"><i>−</i><em>4</em><i>+</i></span></div>
-          <div class="ps-row">Frallan<span class="ps-step"><i>−</i><em>6</em><i>+</i></span></div>
+          <div class="ps-top"><small>Grundspel 3 · Forsgården</small><b>Ossa</b></div>
+          <div class="ps-row">Netto<span class="ps-step"><i>−</i><em>71</em><i>+</i></span></div>
+          <div class="ps-row">Lilla Rundan<span class="ps-step"><i>−</i><em>13</em><i>+</i></span></div>
+          <div class="ps-row">Puttar<span class="ps-step"><i>−</i><em>31</em><i>+</i></span></div>
+          <div class="ps-row">Närmast hål<span class="ps-step"><i>−</i><em>1</em><i>+</i></span></div>
+          <div class="ps-row">Längsta drive<span class="ps-step"><i>−</i><em>0</em><i>+</i></span></div>
         </div>
       </div>
     </div>

@@ -16,9 +16,10 @@ All data (spelare, poäng, lag, mästare, historik, spelformer) ligger i **`asse
 
 ## Resultatappen
 - Öppna `hgmtouren.se/app/` i mobilen → "Lägg till på hemskärmen" så beter den sig som en app.
-- Välj bana, spelform och spelare, knappa in slag hål för hål. Netto, poängbogey och ledartavla räknas ut automatiskt.
-- Fungerar offline på banan. Banans par/index sparas och återanvänds nästa gång.
-- Resultat sparas i telefonen och kan delas till gruppchatten.
+- Välj omgång (Grundspel 1–8, Final 1–3), bana och spelare – dig själv eller hela bollen.
+- Fyll i rundans totaler: nettoscore, Lilla Rundan, puttar, närmast hål och längsta drive.
+- Granskningsvyn visar dagens vinnare per kategori. Rapporten kan delas i gruppchatten.
+- Fungerar offline. Rapporter sparas i telefonen tills databasen är kopplad.
 
 ### Nästa steg
 Koppla en databas (t.ex. Supabase) med inloggning för spelarna, så att inskickade rundor
