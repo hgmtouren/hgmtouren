@@ -148,6 +148,42 @@ window.HGM = {
       side: {"lilla": {"spikrak": 69, "sillen": 59, "ossa": 96, "eb": 87, "lufsen": 83, "mike": 82, "tamo": 73, "lillegubben": 80, "27an": 67, "elof": 44, "frallan": 68, "kaka": 85, "idioten": 76, "oversten": 89, "svagern": 47}, "putt": {"spikrak": 262, "sillen": 310, "ossa": 250, "eb": 262, "lufsen": 266, "mike": 283, "tamo": 281, "lillegubben": 258, "27an": 273, "elof": 317, "frallan": 293, "kaka": 277, "idioten": 280, "oversten": 248, "svagern": 331}, "nh": {"spikrak": 3, "ossa": 8, "eb": 1, "lufsen": 1, "mike": 1, "tamo": 2, "lillegubben": 1, "27an": 5, "elof": 2, "kaka": 1, "idioten": 3, "oversten": 3}, "ld": {"spikrak": 4, "ossa": 5, "eb": 1, "lufsen": 1, "mike": 1, "tamo": 2, "27an": 1, "kaka": 1}},
       placSum: {"spikrak": 66, "sillen": 79, "ossa": 31, "eb": 58, "lufsen": 58, "mike": 55, "tamo": 69, "lillegubben": 69, "27an": 67, "elof": 104, "frallan": 75, "kaka": 59, "idioten": 68, "oversten": 37, "svagern": 108},
       roundWinners: [["sillen", "27an", "oversten"], ["mike", "kaka", "idioten"], ["oversten"], ["ossa"], ["mike", "oversten"], ["tamo"], ["27an"], ["eb"]]
+    },
+    2024: {
+      status: "klar",
+      /* 2024 vann den med lägst placeringssumma (summan av placeringarna i alla 8 omgångar) */
+      scoring: "plac",
+      grundWinner: "spikrak",
+      teams: {
+        HETRO: { name: "HETRO", nick: "HETRO", color: "h", members: ["spikrak", "idioten", "kaka", "27an", "svagern"] },
+        GAY:   { name: "GAY",   nick: "GAY",   color: "g", members: ["oversten", "mike", "eb", "ossa", "elof"] },
+        MONGO: { name: "MONGO", nick: "MONGO", color: "b", members: ["frallan", "tamo", "lufsen", "sillen", "lillegubben"] }
+      },
+      teamResult: { grund: { HETRO: 283.8, GAY: 282.3, MONGO: 256.5 }, winner: "HETRO",
+        text: "Tre lag 2024. HETRO vann lagtävlingen i grundspelet, 1,5 poäng före GAY." },
+      /* points = placeringssumma (lägst vinner) */
+      points: {"spikrak": 35, "idioten": 44, "kaka": 57, "27an": 63, "svagern": 92, "oversten": 38, "mike": 61, "eb": 65, "ossa": 67, "elof": 50, "frallan": 86, "tamo": 98, "lufsen": 57, "sillen": 89, "lillegubben": 65},
+      /* rounds: [netto, poängbogey, lilla rundan, puttar, placering] */
+      rounds: {
+        "spikrak": [[74,34,10,34,2],[74,34,12,33,5],[76,32,8,34,4],[78,30,12,33,11],[70,38,12,31,1],[76,33,11,32,7],[70,38,12,27,1],[75,33,12,34,4]],
+        "idioten": [[82,27,7,31,11],[76,32,13,34,8],[72,36,11,30,1],[70,38,16,32,2],[75,34,14,28,4],[76,33,12,32,7],[78,30,11,31,7],[75,32,10,25,4]],
+        "kaka": [[84,25,8,37,13],[72,36,11,34,3],null,[72,37,16,32,4],[74,34,11,34,2],[68,40,16,28,1],[83,28,9,33,10],[80,32,13,33,9]],
+        "27an": [[76,32,10,33,4],[73,35,14,28,4],null,[75,33,14,29,7],null,null,[72,36,14,26,2],[72,35,13,29,1]],
+        "svagern": [[77,31,10,44,6],[71,37,15,34,1],null,null,null,[79,31,13,36,10],null,null],
+        "oversten": [[74,35,9,34,2],[71,37,13,34,1],[77,33,8,33,5],[73,35,15,32,5],[74,37,8,32,2],[73,35,13,29,5],[82,26,7,32,8],[81,29,9,38,10]],
+        "mike": [[77,31,9,31,6],[79,31,9,31,11],[83,26,8,26,8],[69,39,17,28,1],[77,32,12,31,6],null,[77,31,10,33,6],[79,28,12,35,8]],
+        "eb": [[80,29,9,32,9],[74,34,13,31,5],[77,31,10,36,5],[75,33,13,33,7],null,[77,34,11,31,9],[75,33,8,27,3],[85,26,6,40,12]],
+        "ossa": [[68,40,13,27,1],[80,28,11,35,13],[73,35,13,33,2],[78,31,10,33,11],[78,30,8,28,7],null,null,[74,34,11,33,3]],
+        "elof": [[83,25,5,33,12],[77,32,12,31,9],[80,28,10,31,7],[70,39,16,30,2],[86,25,10,39,11],[72,39,10,27,2],[75,35,10,30,3],[75,32,14,37,4]],
+        "frallan": [[91,20,8,36,15],[84,26,11,30,14],null,[78,31,13,31,11],[75,33,11,30,4],[72,36,13,34,2],null,[81,30,11,40,10]],
+        "tamo": [[79,29,9,31,8],null,[86,25,4,32,9],null,[81,30,10,28,9],[85,26,8,34,12],null,null],
+        "lufsen": [[76,33,12,28,4],[75,33,13,29,7],[74,34,9,29,3],[74,34,13,33,6],[81,28,12,33,9],[73,35,10,31,5],[82,27,10,33,8],null],
+        "sillen": [[85,24,7,32,14],[79,32,11,30,11],null,[77,33,13,37,9],[80,28,10,27,8],[79,30,11,30,10],null,[76,32,10,33,7]],
+        "lillegubben": [[81,28,9,32,10],[77,31,11,31,9],null,[77,34,14,30,9],null,[72,36,11,31,2],[75,33,11,29,3],[73,34,13,35,2]]
+      },
+      side: {"lilla": {"spikrak": 89, "idioten": 94, "kaka": 83, "27an": 70, "svagern": 48, "oversten": 82, "mike": 80, "eb": 73, "ossa": 71, "elof": 87, "frallan": 68, "tamo": 43, "lufsen": 80, "sillen": 63, "lillegubben": 71}, "putt": {"spikrak": 258, "idioten": 243, "kaka": 272, "27an": 271, "svagern": 324, "oversten": 264, "mike": 256, "eb": 274, "ossa": 268, "elof": 258, "frallan": 280, "tamo": 290, "lufsen": 261, "sillen": 268, "lillegubben": 273}, "nh": {"spikrak": 14, "idioten": 15, "kaka": 8, "27an": 9, "svagern": 3, "oversten": 10, "mike": 6, "eb": 10, "ossa": 5, "elof": 4, "frallan": 8, "tamo": 4, "lufsen": 5, "sillen": 5, "lillegubben": 6}, "ld": {"idioten": 1, "kaka": 1, "27an": 6, "oversten": 1, "mike": 1, "eb": 1, "ossa": 2, "frallan": 1, "lufsen": 1}},
+      sideInfo: { lilla: "Poäng, alla 8 omgångar", putt: "Puttar, alla 8 omgångar · lägst vinner", nh: ["Greenträffar", "Antal, alla 8 omgångar"], ld: "Antal vinster, alla 8 omgångar" },
+      roundWinners: [["ossa"], ["svagern", "oversten"], ["idioten"], ["mike"], ["spikrak"], ["kaka"], ["spikrak"], ["27an"]]
     }
   },
 
@@ -247,6 +283,15 @@ HGM.pickSeason = () => {
 HGM.S = y => HGM.seasons[y];
 HGM.teamOf = (y, id) => { const t = HGM.S(y).teams; return Object.keys(t).find(k => t[k].members.includes(id)) || null; };
 HGM.inSeason = y => { const S = HGM.S(y); return [...new Set(Object.values(S.teams).flatMap(t => t.members))].map(HGM.byId); };
-HGM.ranked = y => HGM.inSeason(y).map(p => ({ ...p, points: HGM.S(y).points[p.id] || 0, team: HGM.teamOf(y, p.id) }))
-  .sort((a, b) => b.points - a.points || a.nick.localeCompare(b.nick, "sv"));
+HGM.isPlac = y => HGM.S(y).scoring === "plac";
+HGM.ranked = y => {
+  const plac = HGM.isPlac(y);
+  return HGM.inSeason(y).map(p => ({ ...p, points: HGM.S(y).points[p.id] || 0, team: HGM.teamOf(y, p.id) }))
+    .sort((a, b) => (plac ? a.points - b.points : b.points - a.points) || a.nick.localeCompare(b.nick, "sv"));
+};
+/* Placering med delade platser vid lika resultat */
+HGM.rank = (y, id) => { const r = HGM.ranked(y), me = r.find(p => p.id === id); if (!me || !me.points) return null;
+  return 1 + r.filter(p => p.points && (HGM.isPlac(y) ? p.points < me.points : p.points > me.points)).length; };
+/* Enhet för grundspelets resultat */
+HGM.unit = y => HGM.isPlac(y) ? { short: "plac.", long: "i placeringssumma", label: "Placeringssumma", note: "Lägst placeringssumma vinner" } : { short: "p", long: "poäng", label: "Poäng", note: "Flest poäng vinner" };
 HGM.teamTotal = (y, t) => HGM.ranked(y).filter(p => p.team === t).reduce((s, p) => s + p.points, 0);

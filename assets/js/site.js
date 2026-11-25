@@ -76,16 +76,17 @@
   const teamColor = id => (team(id) || {}).color || "x";
 
   function standingsRows(list, ranked) {
-    const max = Math.max(1, ...ranked.map(p => p.points));
+    const vals = ranked.map(p => p.points).filter(Boolean), plac = H.isPlac(Y);
+    const max = Math.max(1, ...vals), min = Math.min(...vals);
     return list.map(p => {
-      const pos = ranked.indexOf(p) + 1, t = team(p.team);
+      const pos = H.rank(Y, p.id) || ranked.indexOf(p) + 1, t = team(p.team);
       const started = ranked.some(x => x.points);
       const cls = !started ? "row" : pos === 1 ? "row top first" : pos <= 3 ? "row top" : "row";
       return `<div class="${cls}" data-profile="${p.id}" tabindex="0" role="button" style="cursor:pointer">
         <div class="pos">${started ? pos : "–"}</div>
         <img class="avatar" src="${img(p)}" alt="" loading="lazy">
         <div class="who"><b>${esc(p.nick)}</b><small><span class="dot ${teamColor(p.team)}"></span>${t ? esc(t.name) : ""}${t && t.captain === p.id ? " · Kapten" : ""}</small></div>
-        <div class="pts"><b>${p.points.toLocaleString("sv-SE")}</b><div class="bar"><i style="width:${(p.points / max * 100).toFixed(1)}%"></i></div></div>
+        <div class="pts"><b>${p.points.toLocaleString("sv-SE")}</b><div class="bar"><i style="width:${(plac ? (p.points ? min / p.points * 100 : 0) : p.points / max * 100).toFixed(1)}%"></i></div></div>
       </div>`;
     }).join("");
   }
@@ -134,10 +135,10 @@
       return `<article class="pcard" data-team="${p.team}" data-profile="${p.id}" tabindex="0" role="button" aria-label="Visa profil för ${esc(p.nick)}">
         <img src="${img(p)}" alt="${esc(p.nick)}" loading="lazy">
         <span class="tag ${teamColor(p.team)}">${t ? esc(t.name) : ""}${t && t.captain === p.id ? " · C" : ""}</span>
-        ${started ? `<span class="rank">#${i + 1}</span>` : ""}
+        ${started ? `<span class="rank">#${H.rank(Y, p.id) || i + 1}</span>` : ""}
         <div class="info">
           <b>${esc(p.nick)}</b><small>${esc(p.name)}</small>
-          <div class="meta"><span><b>${p.points}</b> p</span>${titles.length ? `<span>🏆 ${titles.join(", ")}</span>` : ""}</div>
+          <div class="meta"><span><b>${p.points}</b> ${H.unit(Y).short}</span>${titles.length ? `<span>🏆 ${titles.join(", ")}</span>` : ""}</div>
         </div>
       </article>`;
     }).join("");
@@ -248,11 +249,13 @@
 
     fill("[data-final]", finalSection());
     const side = S.side || {};
+    const si = S.sideInfo || {}, nhT = Array.isArray(si.nh) ? si.nh : ["Närmast hål", si.nh || "Antal vinster, alla 8 omgångar"];
     fill("[data-season-lists]",
-      toplist("Lilla Rundan", "Poäng, bästa 6 av 8", side.lilla, v => v + " p") +
-      toplist("Bästa puttaren", "Puttar, bästa 6 av 8 · lägst vinner", side.putt, v => v, true) +
-      toplist("Närmast hål", "Antal vinster, alla 8 omgångar", side.nh, v => v + " st") +
-      toplist("Längsta drive", "Antal vinster, alla 8 omgångar", side.ld, v => v + " st"));
+      toplist("Lilla Rundan", si.lilla || "Poäng, bästa 6 av 8", side.lilla, v => v + " p") +
+      toplist("Bästa puttaren", si.putt || "Puttar, bästa 6 av 8 · lägst vinner", side.putt, v => v, true) +
+      toplist(nhT[0], nhT[1], side.nh, v => v + " st") +
+      toplist("Längsta drive", si.ld || "Antal vinster, alla 8 omgångar", side.ld, v => v + " st"));
+    fill("[data-scoring-note]", esc(H.unit(Y).note) + (H.isPlac(Y) ? ". Varje omgångs placering räknas ihop." : ". Placeringspoäng varje omgång, 250 till 1:an."));
     fill("[data-round-winners]", Array.from({ length: 8 }, (_, i) => {
       const w = (S.roundWinners || [])[i];
       const info = (S.roundInfo || [])[i];
@@ -262,7 +265,7 @@
         ${info ? `<span class="rw-course">${esc(info.course.split(",")[0])}</span>` : ""}${has ? `<span class="rw-more">Alla resultat →</span>` : ""}</${has ? "button" : "div"}>`;
     }).join(""));
     fill("[data-season-summary]", S.grundWinner
-      ? `${esc(H.byId(S.grundWinner).nick)} vann grundspelet med ${fmtNum(S.points[S.grundWinner])} poäng.${S.teamResult ? " " + esc(S.teams[S.teamResult.winner].name) + " vann lagtävlingen." : ""}`
+      ? `${esc(H.byId(S.grundWinner).nick)} vann grundspelet med ${fmtNum(S.points[S.grundWinner])} ${H.unit(Y).long}.${S.teamResult ? " " + esc(S.teams[S.teamResult.winner].name) + " vann lagtävlingen." : ""}`
       : `Säsongen ${Y} har inte startat.`);
   }
 
@@ -334,7 +337,7 @@
         <button class="profile-close" aria-label="Stäng">✕</button></div>
       <div class="profile-body">
         <div class="p-table-wrap"><table class="p-table final-table">
-          <tr><th>Plac</th><th>Spelare</th><th>Netto</th><th>Poäng</th><th>Lilla</th><th>Putt</th></tr>${rows}</table></div>
+          <tr><th>Plac</th><th>Spelare</th><th>Netto</th><th>${H.isPlac(Y) ? "Poängb." : "Poäng"}</th><th>Lilla</th><th>Putt</th></tr>${rows}</table></div>
         ${dns.length ? `<p class="final-foot">Spelade inte: ${dns.map(esc).join(", ")}.</p>` : ""}
         <div class="round-nav">
           <button class="btn btn-line" data-step="-1" ${i === 0 ? "disabled" : ""}>← Omgång ${i}</button>
@@ -368,7 +371,7 @@
   function profileHTML(id) {
     const p = H.byId(id), S = H.S(Y), tid = H.teamOf(Y, id), t = tid ? S.teams[tid] : null;
     const ranked = H.ranked(Y), me = ranked.find(x => x.id === id);
-    const pos = me && me.points ? ranked.indexOf(me) + 1 : null;
+    const pos = H.rank(Y, id);
     const R = (S.rounds || {})[id] || [], F = (S.final || {})[id];
     const played = R.filter(Boolean);
     const best = played.length ? Math.min(...played.map(r => r[0])) : "–";
@@ -388,7 +391,7 @@
     const years = H.seasonYears();
     const grundChips = years.filter(y => H.S(y).points[id]).map(y => {
       const rk = H.ranked(y), m = rk.find(x => x.id === id);
-      return `<button class="hist-chip ${y === Y ? "on" : ""}" data-pyear="${y}" aria-pressed="${y === Y}">${y}<b>${rk.indexOf(m) + 1}:a</b><span>${fmtNum(m.points)} p</span></button>`;
+      return `<button class="hist-chip ${y === Y ? "on" : ""}" data-pyear="${y}" aria-pressed="${y === Y}">${y}<b>${H.rank(y, id)}:a</b><span>${fmtNum(m.points)} ${H.unit(y).short}</span></button>`;
     }).join("");
     const finalChips = years.map(y => [y, finalPlace(y, id)]).filter(([, f]) => f).map(([y, f]) =>
       `<button class="hist-chip final-chip ${y === Y ? "on" : ""}" data-pyear="${y}" aria-pressed="${y === Y}">${y}<b>${f.pos === 1 ? "🏆 1:a" : f.pos + ":a"}</b><span>${esc(f.text)}</span></button>`).join("");
@@ -398,18 +401,18 @@
         <div><h3>${esc(p.nick)}</h3><small>${esc(p.name)}${t ? ` · ${esc(t.name)} ${Y}${t.captain === id ? " · Kapten" : ""}` : ""}</small></div>
         <button class="profile-close" aria-label="Stäng">✕</button></div>
       <div class="profile-body">
-        ${grundChips ? `<div class="p-section"><h4>Grundspelet per säsong</h4><p class="p-hint">Placering och poäng i grundomgångarna. Tryck på ett år för att visa den säsongen nedan.</p><div class="hist">${grundChips}</div></div>` : ""}
+        ${grundChips ? `<div class="p-section"><h4>Grundspelet per säsong</h4><p class="p-hint">Placering och resultat i grundomgångarna (poäng, eller placeringssumma t.o.m. 2024). Tryck på ett år för att visa den säsongen nedan.</p><div class="hist">${grundChips}</div></div>` : ""}
         ${finalChips ? `<div class="p-section"><h4>Slutspelet per säsong</h4><div class="hist">${finalChips}</div></div>` : ""}
         <div class="p-season-label" id="p-season">Visar säsong ${Y}</div>
         <div class="p-kpis">
-          <div class="p-kpi"><b>${me && me.points ? fmtNum(me.points) : "–"}</b><span>Poäng grundspelet ${Y}${pos ? ` · plats ${pos}` : ""}</span></div>
+          <div class="p-kpi"><b>${me && me.points ? fmtNum(me.points) : "–"}</b><span>${H.unit(Y).label} grundspelet ${Y}${pos ? ` · plats ${pos}` : ""}</span></div>
           <div class="p-kpi"><b>${fp ? fp.pos + ":a" : "–"}</b><span>Slutspelet ${Y}${fp ? " · " + esc(fp.text) : ""}</span></div>
           <div class="p-kpi"><b>${best}</b><span>Bästa netto grundspelet ${Y}</span></div>
           <div class="p-kpi"><b>${wins} · ${played.length}/8</b><span>Delsegrar · spelade omgångar ${Y}</span></div>
         </div>
         ${badges.length ? `<div class="p-badges">${badges.map(b => `<span class="badge">${esc(b)}</span>`).join("")}</div>` : ""}
         ${R.length ? `<div class="p-section"><h4>Säsongen ${Y} runda för runda</h4><div class="p-table-wrap"><table class="p-table">
-          <tr><th>Omgång</th><th>Netto</th><th>Plac</th><th>Poäng</th><th>Lilla R.</th><th>Puttar</th></tr>${rows}${frows}</table></div></div>`
+          <tr><th>Omgång</th><th>Netto</th><th>Plac</th><th>${H.isPlac(Y) ? "Poängb." : "Poäng"}</th><th>Lilla R.</th><th>Puttar</th></tr>${rows}${frows}</table></div></div>`
           : `<p class="empty">Inga rundor inlagda för ${Y}.</p>`}
       </div>`;
   }
