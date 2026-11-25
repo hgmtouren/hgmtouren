@@ -81,12 +81,12 @@
      VY: Start
      ======================================================= */
   function viewHome() {
-    header("HGM Touren " + H.season, "Resultat", false);
+    header("HGM Touren", "Resultat", false);
     const saved = store.get(KEY_SAVED, []);
     $view.innerHTML = `
       ${rep ? `
         <button class="card item" id="resume" style="margin-bottom:14px">
-          <div class="grow"><b>${esc(rep.round)} · ${esc(rep.course)}</b><small>${rep.entries.map(e => nick(e.id)).join(", ")}</small></div>
+          <div class="grow"><b>${rep.season || ""} ${esc(rep.round)} · ${esc(rep.course)}</b><small>${rep.entries.map(e => nick(e.id)).join(", ")}</small></div>
           <span class="pill live">● Pågår</span>
         </button>` : ""}
       <div class="hero-card">
@@ -100,16 +100,20 @@
         ${saved.length ? saved.map((r, i) => ({ r, i })).reverse().map(({ r, i }) => {
           const w = byNetto(r)[0];
           return `<button class="card item" data-open="${i}">
-            <div class="grow"><b>${esc(r.round)} · ${esc(r.course)}</b><small>${r.date} · ${r.entries.length} spelare</small></div>
+            <div class="grow"><b>${r.season || ""} ${esc(r.round)} · ${esc(r.course)}</b><small>${r.date} · ${r.entries.length} spelare</small></div>
             <span class="pill">🏆 ${nick(w.id)}</span></button>`;
         }).join("") : `<div class="card item"><small>Inga sparade rapporter än. De dyker upp här när du sparat en runda.</small></div>`}
       </div>`;
     document.getElementById("new").onclick = async () => {
       if (rep && !(await ask("Du har en påbörjad rapport. Vill du kasta den och börja om?", "Kasta och börja om", true))) return;
-      viewSetup({ round: guessRound(), course: "", date: today(), ids: store.get("hgm.lastIds", []) });
+      viewSetup({ season: guessSeason(), round: guessRound(), course: "", date: today(), ids: store.get("hgm.lastIds", []) });
     };
     const r = document.getElementById("resume"); if (r) r.onclick = () => viewEntry();
     $view.querySelectorAll("[data-open]").forEach(b => b.onclick = () => viewReview(store.get(KEY_SAVED, [])[+b.dataset.open], true));
+  }
+  function guessSeason() {
+    const ys = H.seasonYears();
+    return ys.find(y => H.S(y).status !== "klar") || H.defaultSeason;
   }
   function guessRound() {
     const done = store.get(KEY_SAVED, []).map(r => r.round);
@@ -121,9 +125,12 @@
      ======================================================= */
   function viewSetup(d) {
     header("Ny rapport", "Omgång & spelare", false);
-    const ranked = H.ranked();
+    const ranked = H.ranked(d.season);
     $view.innerHTML = `
-      <span class="label" style="margin-top:4px">Omgång</span>
+      <span class="label" style="margin-top:4px">Säsong</span>
+      <div class="chips">${H.seasonYears().map(y => `<button class="chipb ${y === d.season ? "on" : ""}" data-season="${y}">${y}${H.S(y).status === "kommande" ? " (test)" : ""}</button>`).join("")}</div>
+
+      <span class="label">Omgång</span>
       <div class="chips">${H.rounds.map(r => `<button class="chipb ${r === d.round ? "on" : ""}" data-round="${esc(r)}">${esc(r)}</button>`).join("")}</div>
 
       <span class="label">Bana</span>
@@ -143,6 +150,13 @@
         <button class="btn btn-dark" id="start">Fyll i resultat</button>
       </div></div>`;
 
+    $view.querySelectorAll("[data-season]").forEach(b => b.onclick = () => {
+      d.season = +b.dataset.season;
+      const allowed = H.inSeason(d.season).map(p => p.id);
+      d.ids = d.ids.filter(id => allowed.includes(id));
+      d.course = (document.getElementById("course").value || d.course);
+      viewSetup(d);
+    });
     $view.querySelectorAll("[data-round]").forEach(b => b.onclick = () => {
       d.round = b.dataset.round; $view.querySelectorAll("[data-round]").forEach(x => x.classList.toggle("on", x === b));
     });
@@ -172,7 +186,7 @@
       if (!d.course) { toast("Välj eller skriv in bana"); return; }
       if (!d.ids.length) { toast("Välj minst en spelare"); return; }
       store.set("hgm.lastIds", d.ids);
-      rep = { id: Date.now().toString(36), round: d.round, course: d.course, date: d.date, cur: 0,
+      rep = { id: Date.now().toString(36), season: d.season, round: d.round, course: d.course, date: d.date, cur: 0,
         entries: d.ids.map(id => ({ id, netto: null, lilla: null, putt: null, nh: 0, ld: 0 })) };
       save(); viewEntry();
     };
@@ -185,12 +199,12 @@
   function viewEntry() {
     const e = rep.entries[rep.cur], last = rep.cur === rep.entries.length - 1;
     const p = H.byId(e.id);
-    header(`${rep.round} · ${rep.course}`, `${p.nick} · ${rep.cur + 1}/${rep.entries.length}`, true);
+    header(`${rep.season || ""} ${rep.round} · ${rep.course}`, `${p.nick} · ${rep.cur + 1}/${rep.entries.length}`, true);
     $view.innerHTML = `
       ${rep.entries.length > 1 ? `<div class="ptabs">${rep.entries.map((x, i) => `
         <button class="ptab ${i === rep.cur ? "on" : ""}" data-go="${i}"><img src="${img(x.id)}" alt="">${esc(nick(x.id))}${complete(x) ? '<span class="ok">✓</span>' : ""}</button>`).join("")}</div>` : ""}
       <div class="card who-card"><img src="${img(e.id)}" alt="">
-        <div><b>${esc(p.nick)}</b><small>${H.teams[p.team].name} · ${esc(rep.round)}</small></div></div>
+        <div><b>${esc(p.nick)}</b><small>${(() => { const y = rep.season || H.defaultSeason, t = H.teamOf(y, e.id); return t ? esc(H.S(y).teams[t].name) + " · " : ""; })()}${rep.season || ""} ${esc(rep.round)}</small></div></div>
       ${FIELDS.map(f => {
         const v = e[f.id], set = v != null && !(f.best === "sum" && v === 0);
         return `<div class="card stat">
@@ -302,7 +316,7 @@
   async function share(r) {
     const w = winners(r);
     const line = e => `${nick(e.id)}: netto ${e.netto ?? "–"} · LR ${e.lilla ?? "–"} · puttar ${e.putt ?? "–"}${e.nh ? ` · NH ${e.nh}` : ""}${e.ld ? ` · LD ${e.ld}` : ""}`;
-    const text = [`⛳ HGM Touren – ${r.round}`, `${r.course}, ${r.date}`, "",
+    const text = [`⛳ HGM Touren ${r.season || ""} – ${r.round}`, `${r.course}, ${r.date}`, "",
       ...byNetto(r).map(line),
       ...(r.entries.length > 1 ? ["", `🏆 Netto: ${w.netto ? w.netto.ids.map(nick).join(", ") : "–"}`,
         `🎯 Puttar: ${w.putt ? w.putt.ids.map(nick).join(", ") : "–"}`,

@@ -18,17 +18,14 @@
   <div class="wrap">
     <span class="eyebrow">Säsong <span data-season></span></span>
     <h1>Spelarna</h1>
-    <p class="lead">14 spelare i två lag. Tryck på en spelare för att se statistiken runda för runda.</p>
+    <p class="lead">Tryck på en spelare för att se statistiken runda för runda.</p>
+    <div class="switch-row" data-season-switch></div><div data-season-note></div>
   </div>
 </section>
 <section class="section">
   <div class="wrap">
     <div class="section-head">
-      <div class="filters">
-        <button class="chip active" data-filter="all">Alla</button>
-        <button class="chip" data-filter="G">Lag G</button>
-        <button class="chip" data-filter="H">Lag H</button>
-      </div>
+      <div class="filters" data-filters></div>
     </div>
     <div class="players" data-players></div>
   </div>
