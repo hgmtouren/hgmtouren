@@ -11,11 +11,12 @@
   const $ = (sel) => document.querySelector(sel);
 
   const LINKS = [
-    ["hem", "Hem", ""],
-    ["stallning", "Ställning", "stallning/"],
-    ["spelarna", "Spelarna", "spelarna/"],
-    ["statistik", "Statistik", "statistik/"],
-    ["mastare", "Mästare", "mastare/"]
+    ["hem", "Hem", "index.html"],
+    ["stallning", "Ställning", "stallning/index.html"],
+    ["spelarna", "Spelarna", "spelarna/index.html"],
+    ["statistik", "Statistik", "statistik/index.html"],
+    ["mastare", "Mästare", "mastare/index.html"],
+    ["galleri", "Galleri", "galleri/index.html"]
   ];
 
   /* ── Nav ── */
@@ -24,12 +25,12 @@
     nav.className = "nav";
     nav.innerHTML = `
       <div class="wrap">
-        <a class="brand" href="${ROOT}"><img class="brand-logo" src="${ROOT}assets/img/logo.jpg" alt="">HGM Touren</a>
+        <a class="brand" href="${ROOT}index.html"><img class="brand-logo" src="${ROOT}assets/img/logo.jpg" alt="">HGM Touren</a>
         <ul class="nav-links">
           ${LINKS.map(([id, label, href]) => `<li><a href="${ROOT}${href}" class="${id === PAGE ? "active" : ""}">${label}</a></li>`).join("")}
-          <li class="only-mobile"><a href="${ROOT}app/">Rapportera resultat →</a></li>
+          <li class="only-mobile"><a href="${ROOT}app/index.html">Rapportera resultat →</a></li>
         </ul>
-        <a class="nav-cta" href="${ROOT}app/">Rapportera resultat</a>
+        <a class="nav-cta" href="${ROOT}app/index.html">Rapportera resultat</a>
         <button class="nav-toggle" aria-label="Meny" aria-expanded="false">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
@@ -50,8 +51,8 @@
     foot.className = "footer";
     foot.innerHTML = `
       <div class="wrap">
-        <a class="brand" href="${ROOT}" style="color:#fff"><img class="brand-logo" src="${ROOT}assets/img/logo.jpg" alt="">HGM Touren</a>
-        <nav>${LINKS.map(([, l, h]) => `<a href="${ROOT}${h}">${l}</a>`).join("")}<a href="${ROOT}app/">Resultatappen</a></nav>
+        <a class="brand" href="${ROOT}index.html" style="color:#fff"><img class="brand-logo" src="${ROOT}assets/img/logo.jpg" alt="">HGM Touren</a>
+        <nav>${LINKS.map(([, l, h]) => `<a href="${ROOT}${h}">${l}</a>`).join("")}<a href="${ROOT}app/index.html">Resultatappen</a></nav>
         <small>© ${H.season} HGM Touren · All Swingers · Est. ${H.founded} · <a href="mailto:${H.contact}">${H.contact}</a></small>
       </div>`;
   }
@@ -252,6 +253,34 @@
   }
   document.addEventListener("click", e => { const c = e.target.closest("[data-profile]"); if (c) openProfile(c.dataset.profile); });
   document.addEventListener("keydown", e => { const c = e.target.closest && e.target.closest("[data-profile]"); if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openProfile(c.dataset.profile); } });
+
+  /* ── Galleri ── */
+  const G = H.gallery || [];
+  fill("[data-gallery]", (H.gallerySections || []).map(([id, label]) => {
+    const items = G.filter(x => x.s === id);
+    if (!items.length) return "";
+    return `<div class="gal-sec"><h2 class="gal-h">${esc(label)} <span>${items.length} bilder</span></h2><div class="gal-grid">${items.map(x =>
+      `<button class="gal-item" data-gal="${G.indexOf(x)}" aria-label="Visa bild"><img src="${ROOT}assets/img/galleri/${x.f}-t.jpg" alt="" loading="lazy" width="${x.w}" height="${x.h}"></button>`).join("")}</div></div>`;
+  }).join(""));
+  function openGal(i) {
+    const box = document.createElement("div");
+    box.className = "lightbox";
+    const show = () => { box.querySelector("img").src = `${ROOT}assets/img/galleri/${G[i].f}.jpg`; box.querySelector(".lb-count").textContent = `${i + 1} / ${G.length}`; };
+    box.innerHTML = `<img alt=""><button class="lb-btn lb-prev" aria-label="Föregående">‹</button><button class="lb-btn lb-next" aria-label="Nästa">›</button><button class="lb-btn lb-close" aria-label="Stäng">✕</button><span class="lb-count"></span>`;
+    const step = d => { i = (i + d + G.length) % G.length; show(); };
+    const close = () => { box.remove(); document.removeEventListener("keydown", key); };
+    const key = e => { if (e.key === "Escape") close(); if (e.key === "ArrowRight") step(1); if (e.key === "ArrowLeft") step(-1); };
+    box.querySelector(".lb-prev").onclick = e => { e.stopPropagation(); step(-1); };
+    box.querySelector(".lb-next").onclick = e => { e.stopPropagation(); step(1); };
+    box.querySelector(".lb-close").onclick = close;
+    box.addEventListener("click", e => { if (e.target === box) close(); });
+    let x0 = null;
+    box.addEventListener("touchstart", e => x0 = e.touches[0].clientX, { passive: true });
+    box.addEventListener("touchend", e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); x0 = null; });
+    document.addEventListener("keydown", key);
+    document.body.appendChild(box); show(); box.querySelector(".lb-close").focus();
+  }
+  document.addEventListener("click", e => { const g = e.target.closest("[data-gal]"); if (g) openGal(+g.dataset.gal); });
 
   /* Filter på spelarsidan */
   document.querySelectorAll("[data-filter]").forEach(btn => {

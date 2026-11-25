@@ -130,6 +130,10 @@ window.HGM = {
   /* Delsegrar per omgång 2026 */
   roundWinners2026: [["frallan"], ["frallan", "lufsen"], ["lufsen"], ["lufsen"], ["frallan"], ["oversten"], ["ossa"], ["lufsen", "ossa"]],
 
+  /* Bildgalleri: s = 2026 | tidigare | jubileum */
+  gallerySections: [["2026", "Säsongen 2026"], ["tidigare", "Tidigare år"], ["jubileum", "5-årsjubileet"]],
+  gallery: [{"f":"2026-01","s":"2026","w":640,"h":480},{"f":"2026-02","s":"2026","w":640,"h":480},{"f":"2026-03","s":"2026","w":640,"h":480},{"f":"2026-04","s":"2026","w":640,"h":480},{"f":"2026-08","s":"2026","w":480,"h":640},{"f":"2026-09","s":"2026","w":480,"h":640},{"f":"2026-10","s":"2026","w":640,"h":480},{"f":"2026-11","s":"2026","w":480,"h":640},{"f":"2026-12","s":"2026","w":480,"h":640},{"f":"2026-13","s":"2026","w":640,"h":480},{"f":"2026-19","s":"2026","w":640,"h":480},{"f":"2026-20","s":"2026","w":640,"h":480},{"f":"2026-21","s":"2026","w":640,"h":480},{"f":"2026-22","s":"2026","w":640,"h":480},{"f":"2026-23","s":"2026","w":640,"h":480},{"f":"2026-24","s":"2026","w":640,"h":480},{"f":"2026-25","s":"2026","w":640,"h":480},{"f":"2026-26","s":"2026","w":640,"h":480},{"f":"2026-27","s":"2026","w":640,"h":360},{"f":"2026-28","s":"2026","w":640,"h":480},{"f":"tidigare-07","s":"tidigare","w":640,"h":480},{"f":"tidigare-14","s":"tidigare","w":640,"h":467},{"f":"tidigare-15","s":"tidigare","w":366,"h":640},{"f":"tidigare-16","s":"tidigare","w":640,"h":342},{"f":"tidigare-17","s":"tidigare","w":640,"h":467},{"f":"tidigare-18","s":"tidigare","w":640,"h":480},{"f":"tidigare-34","s":"tidigare","w":480,"h":640},{"f":"tidigare-35","s":"tidigare","w":640,"h":480},{"f":"tidigare-37","s":"tidigare","w":480,"h":640},{"f":"jubileum-29","s":"jubileum","w":480,"h":640},{"f":"jubileum-30","s":"jubileum","w":467,"h":640},{"f":"jubileum-31","s":"jubileum","w":480,"h":640},{"f":"jubileum-32","s":"jubileum","w":480,"h":640},{"f":"jubileum-33","s":"jubileum","w":480,"h":640}],
+
   /* Omgångar som går att rapportera i appen */
   rounds: ["Grundspel 1", "Grundspel 2", "Grundspel 3", "Grundspel 4", "Grundspel 5", "Grundspel 6", "Grundspel 7", "Grundspel 8", "Final 1", "Final 2", "Final 3"]
 };
