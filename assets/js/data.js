@@ -196,7 +196,8 @@ window.HGM = {
   /* Topplistor genom tiderna (från gamla hgmtouren.se, 2021–2025 + 2026 för delsegrar) */
   allTime: {
     wins: { oversten: 8, idioten: 7, lufsen: 6, "27an": 5, kaka: 5, spikrak: 5, ossa: 5, frallan: 4, eb: 3, mike: 3, svagern: 3, lillegubben: 2, elof: 2, tamo: 2, sillen: 1 },
-    putt: { "27an": 30.488, idioten: 30.761, spikrak: 30.810, mike: 31.210, tamo: 31.417, oversten: 31.475, lillegubben: 31.500, eb: 31.575, ossa: 31.642, sillen: 32.550, kaka: 32.852, lufsen: 32.921, frallan: 33.940, elof: 34.400, svagern: 38.029 },
+    /* Snitt puttar per runda 2021–2026 (6 bästa per säsong, varje säsong väger lika) */
+    putt: { "idioten": 30.761, "27an": 30.851, "spikrak": 30.869, "lillegubben": 31.194, "oversten": 31.257, "eb": 31.507, "tamo": 31.563, "ossa": 31.618, "mike": 32.032, "kaka": 32.682, "lufsen": 32.851, "sillen": 33.014, "frallan": 33.450, "elof": 34.917, "svagern": 38.219 },
     lilla: { lufsen: 11.668, idioten: 11.533, lillegubben: 11.432, kaka: 11.218, mike: 11.167, "27an": 11.102, oversten: 11.100, eb: 11.075, frallan: 10.838, spikrak: 10.733, ossa: 10.679, svagern: 10.483, elof: 10.117, tamo: 9.861, sillen: 9.517 },
     loyal: { oversten: 100, eb: 93, kaka: 93, idioten: 90, ossa: 90, lufsen: 88, spikrak: 85, mike: 84, lillegubben: 83, elof: 80, "27an": 73, frallan: 68, svagern: 61, tamo: 60, sillen: 54 }
   },

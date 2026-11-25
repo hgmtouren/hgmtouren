@@ -283,7 +283,7 @@
       <div><h4>${esc(h.title)}</h4><p>${esc(h.text)}</p></div></div>`).join(""));
   fill("[data-alltime-lists]",
     toplist("Mest delsegrar", "Omgångsvinster 2021–2026, delade räknas", H.allTime.wins, v => v + " st") +
-    toplist("Bästa puttaren", "Snitt puttar per runda 2021–2025 · lägst vinner", H.allTime.putt, dec, true) +
+    toplist("Bästa puttaren", "Snitt puttar per runda 2021–2026 · lägst vinner", H.allTime.putt, dec, true) +
     toplist("Lilla Rundan", "Snittpoäng per runda 2021–2025", H.allTime.lilla, dec) +
     toplist("Mest trogna spelaren", "Andel spelade rundor 2021–2025", H.allTime.loyal, v => v + " %"));
   fill("[data-records]", H.records.map(r => { const p = H.byId(r.player);
