@@ -78,6 +78,17 @@ window.HGM = {
     nh:     { spikrak: 6, lufsen: 4, oversten: 4, "27an": 3, ossa: 3, kaka: 3, eb: 2, lillegubben: 2, frallan: 2, tamo: 1 },
     ld:     { "27an": 6, lufsen: 4, spikrak: 2, kaka: 1, ossa: 1, mike: 1, tamo: 1 }
   },
+      /* Bana och datum per omgång */
+      roundInfo: [
+        { course: "Forsgårdens GK, Slottsbanan", date: "3 maj" },
+        { course: "Forsgårdens GK, Slottsbanan", date: "16 maj", note: "Blandad tee" },
+        { course: "Forsgårdens GK, Slottsbanan", date: "31 maj" },
+        { course: "Gräppås GK", date: "28 juni" },
+        { course: "Forsgårdens GK, Slottsbanan", date: "2 juli", note: "3 klubbor & putter" },
+        { course: "Vinbergs GK", date: "9 augusti" },
+        { course: "Göteborgs Golfklubb", date: "15 augusti" },
+        { course: "Forsgårdens GK, Slottsbanan", date: "30 augusti", note: "Röd tee" }
+      ],
       roundWinners: [["frallan"], ["frallan", "lufsen"], ["lufsen"], ["lufsen"], ["frallan"], ["oversten"], ["ossa"], ["lufsen", "ossa"]],
       /* Slutspelet: netto per finalrunda, brutto per finalrunda, puttar och Lilla Rundan totalt.
          start = startslag (vinnaren av grundspelet startar på −1) */

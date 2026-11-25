@@ -258,7 +258,11 @@
       toplist("Längsta drive", "Antal vinster, alla 8 omgångar", side.ld, v => v + " st"));
     fill("[data-round-winners]", Array.from({ length: 8 }, (_, i) => {
       const w = (S.roundWinners || [])[i];
-      return `<div class="card rw"><small>Omgång ${i + 1}</small><b>${w && w.length ? "🏆 " + w.map(id => esc(H.byId(id).nick)).join(" & ") : "<span style='color:var(--muted)'>Ej spelad</span>"}</b></div>`;
+      const info = (S.roundInfo || [])[i];
+      const has = w && w.length;
+      return `<${has ? `button data-round-detail="${i}"` : "div"} class="card rw${has ? " rw-btn" : ""}"><small>Omgång ${i + 1}${info ? " · " + esc(info.date) : ""}</small>
+        <b>${has ? "🏆 " + w.map(id => esc(H.byId(id).nick)).join(" & ") : "<span style='color:var(--muted)'>Ej spelad</span>"}</b>
+        ${info ? `<span class="rw-course">${esc(info.course.split(",")[0])}</span>` : ""}${has ? `<span class="rw-more">Alla resultat →</span>` : ""}</${has ? "button" : "div"}>`;
     }).join(""));
     fill("[data-season-summary]", S.grundWinner
       ? `${esc(H.byId(S.grundWinner).nick)} vann grundspelet med ${fmtNum(S.points[S.grundWinner])} poäng.${S.teamResult ? " " + esc(S.teams[S.teamResult.winner].name) + " vann lagtävlingen." : ""}`
@@ -287,6 +291,48 @@
       <div class="who"><img src="${img(p)}" alt="">${esc(p.nick)} <span>${esc(r.note)}</span></div></div>`; }).join(""));
   fill("[data-grund-winners]", Object.entries(H.grundWinners).reverse().map(([y, id]) =>
     `<div class="card rw"><small>Grundspelet ${y}</small><b>${esc(H.byId(id).nick)}</b></div>`).join(""));
+
+  /* ── Resultat för en omgång ── */
+  function openRound(i) {
+    const S = H.S(Y), info = (S.roundInfo || [])[i] || null, R = S.rounds || {};
+    const played = Object.entries(R).filter(([, r]) => r[i]).map(([id, r]) => ({ id, r: r[i] })).sort((a, b) => a.r[4] - b.r[4] || a.r[0] - b.r[0]);
+    const dns = Object.keys(R).filter(id => !R[id][i]).map(id => H.byId(id).nick).sort((a, b) => a.localeCompare(b, "sv"));
+    const bestPutt = Math.min(...played.map(x => x.r[3])), bestLilla = Math.max(...played.map(x => x.r[2]));
+    const total = (S.roundWinners || []).filter(w => w && w.length).length;
+    const rows = played.map(({ id, r }) => { const p = H.byId(id), t = H.teamOf(Y, id);
+      return `<tr class="${r[4] === 1 ? "win" : ""}"><td class="fpos">${r[4]}</td>
+        <td class="fname"><img src="${img(p)}" alt="">${esc(p.nick)}${t ? `<i class="dot ${teamColor(t)}"></i>` : ""}</td>
+        <td><b>${r[0]}</b></td><td>${r[1]}</td><td${r[2] === bestLilla ? ' class="best"' : ""}>${r[2]}</td><td${r[3] === bestPutt ? ' class="best"' : ""}>${r[3]}</td></tr>`; }).join("");
+    const wrap = document.createElement("div");
+    wrap.className = "profile-bg";
+    wrap.innerHTML = `<div class="profile" role="dialog" aria-modal="true" aria-label="Omgång ${i + 1}">
+      <div class="profile-head round-head"><div>
+        <small>Säsong ${Y} · Omgång ${i + 1} av 8</small>
+        <h3>${info ? esc(info.course) : "Omgång " + (i + 1)}</h3>
+        <small>${info ? esc(info.date + " " + Y) + (info.note ? " · " + esc(info.note) : "") : "Bana och datum är inte registrerade för den här säsongen."}</small></div>
+        <button class="profile-close" aria-label="Stäng">✕</button></div>
+      <div class="profile-body">
+        <div class="p-table-wrap"><table class="p-table final-table">
+          <tr><th>Plac</th><th>Spelare</th><th>Netto</th><th>Poäng</th><th>Lilla</th><th>Putt</th></tr>${rows}</table></div>
+        ${dns.length ? `<p class="final-foot">Spelade inte: ${dns.map(esc).join(", ")}.</p>` : ""}
+        <div class="round-nav">
+          <button class="btn btn-line" data-step="-1" ${i === 0 ? "disabled" : ""}>← Omgång ${i}</button>
+          <button class="btn btn-line" data-step="1" ${i + 1 >= total ? "disabled" : ""}>Omgång ${i + 2} →</button>
+        </div>
+      </div></div>`;
+    const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = e => { if (e.key === "Escape") close(); if (e.key === "ArrowRight" && i + 1 < total) { close(); openRound(i + 1); } if (e.key === "ArrowLeft" && i > 0) { close(); openRound(i - 1); } };
+    wrap.addEventListener("click", e => {
+      if (e.target === wrap) return close();
+      const st = e.target.closest("[data-step]");
+      if (st && !st.disabled) { close(); openRound(i + +st.dataset.step); }
+    });
+    wrap.querySelector(".profile-close").addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(wrap);
+    wrap.querySelector(".profile-close").focus();
+  }
+  document.addEventListener("click", e => { const b = e.target.closest("[data-round-detail]"); if (b) openRound(+b.dataset.roundDetail); });
 
   /* ── Spelarprofil (vald säsong + översikt alla säsonger) ── */
   function openProfile(id) {
@@ -389,6 +435,11 @@
   });
 
   render();
+  /* Byt säsong när adressen ändras (t.ex. bakåtknappen) */
+  window.addEventListener("hashchange", () => {
+    const y = parseInt(location.hash.replace("#", ""), 10);
+    if (H.seasons[y] && y !== Y) { Y = y; document.querySelectorAll(".profile-bg").forEach(el => el.remove()); render(); }
+  });
 
   /* Mjuk in-animation */
   const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
