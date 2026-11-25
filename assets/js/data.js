@@ -79,13 +79,32 @@ window.HGM = {
     ld:     { "27an": 6, lufsen: 4, spikrak: 2, kaka: 1, ossa: 1, mike: 1, tamo: 1 }
   },
       roundWinners: [["frallan"], ["frallan", "lufsen"], ["lufsen"], ["lufsen"], ["frallan"], ["oversten"], ["ossa"], ["lufsen", "ossa"]],
+      /* Slutspelet: netto per finalrunda, brutto per finalrunda, puttar och Lilla Rundan totalt.
+         start = startslag (vinnaren av grundspelet startar på −1) */
       final: {
-    oversten: { netto: [73,71,77], putt: 91, lilla: 34 }, eb: { netto: [75,78,73], putt: 88, lilla: 32 },
-    frallan: { netto: [74,78,75], putt: 92, lilla: 36 }, lufsen: { netto: [78,77,74], putt: 100, lilla: 30, start: -1 },
-    ossa: { netto: [81,75,73], putt: 90, lilla: 31 }, lillegubben: { netto: [77,78,74], putt: 89, lilla: 33 },
-    spikrak: { netto: [77,74,82], putt: 87, lilla: 33 }, mike: { netto: [74,81,78], putt: 96, lilla: 29 },
-    tamo: { netto: [77,76,80], putt: 97, lilla: 27 }, kaka: { netto: [74,80,80], putt: 97, lilla: 31 }
-  }
+        oversten:    { netto: [73,71,77], brutto: [83,81,87], putt: 91,  lilla: 34, nh: 1 },
+        eb:          { netto: [75,78,73], brutto: [83,85,81], putt: 88,  lilla: 32, nh: 3 },
+        frallan:     { netto: [74,78,75], brutto: [85,89,86], putt: 92,  lilla: 36 },
+        lufsen:      { netto: [78,77,74], brutto: [84,83,80], putt: 100, lilla: 30, start: -1, nh: 1, ld: 1 },
+        ossa:        { netto: [81,75,73], brutto: [83,77,75], putt: 90,  lilla: 31, nh: 2, ld: 2 },
+        lillegubben: { netto: [77,78,74], brutto: [86,87,83], putt: 89,  lilla: 33 },
+        spikrak:     { netto: [77,74,82], brutto: [82,79,87], putt: 87,  lilla: 33, nh: 1 },
+        mike:        { netto: [74,81,78], brutto: [82,89,86], putt: 96,  lilla: 29, nh: 1 },
+        tamo:        { netto: [77,76,80], brutto: [85,84,88], putt: 97,  lilla: 27, nh: 1 },
+        kaka:        { netto: [74,80,80], brutto: [83,88,89], putt: 97,  lilla: 31, nh: 1, ld: 1 }
+      },
+      /* Lika slag i finalen delas inte – lägst HCP avgör. Ordning enligt resultatlistan. */
+      finalOrder: ["oversten", "eb", "frallan", "lufsen", "ossa", "lillegubben", "spikrak", "mike", "tamo", "kaka"],
+      finalInfo: {
+        venue: "Araslövs GK", dates: "11–13 september 2026", holes: 54,
+        teamPoints: { G: [64.33, 57.66, 54.66], H: [43.33, 48.66, 51.66] },
+        /* Lagmatcher per final: [Lag H, Lag G, vinnare G|H|D (delad)] */
+        matches: [
+          [["spikrak", "frallan", "G"], ["oversten", "kaka", "D"], ["mike", "tamo", "D"], ["lillegubben", "ossa", "G"]],
+          [["spikrak", "eb", "H"], ["oversten", "ossa", "D"], ["lillegubben", "tamo", "G"], ["mike", "lufsen", "G"]],
+          [["oversten", "frallan", "H"], ["spikrak", "eb", "G"], ["mike", "ossa", "G"], ["lillegubben", "tamo", "H"]]
+        ]
+      }
     },
     2025: {
       status: "klar",

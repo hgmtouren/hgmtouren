@@ -180,6 +180,50 @@
     if (b) { b.parentElement.querySelectorAll(".tl-row[hidden]").forEach(r => r.hidden = false); b.remove(); }
   });
 
+  /* ── Slutspelet ── */
+  function finalSection() {
+    const S = H.S(Y), F = S.final, I = S.finalInfo || {}, champ = H.champions.find(c => c.year === Y);
+    if (!F) {
+      if (champ) { const p = H.byId(champ.player);
+        return `<div class="card final-empty"><b>🏆 ${esc(p.nick)} vann slutspelet ${Y}${champ.venue ? " på " + esc(champ.venue) : ""}${champ.note ? ", " + esc(champ.note) : ""}.</b>
+          <span>Detaljerade finalresultat för ${Y} finns inte inlagda än.</span></div>`; }
+      return `<div class="card final-empty"><b>Slutspelet ${Y} har inte spelats.</b><span>Topp 10 i grundspelet går till slutspelet. Vinnaren av grundspelet startar på −1.</span></div>`;
+    }
+    const order = S.finalOrder || Object.keys(F);
+    const sum = a => a.reduce((x, y) => x + y, 0);
+    const tot = id => sum(F[id].netto) + (F[id].start || 0);
+    const best = (fn, low) => { const v = order.map(fn); const b = low ? Math.min(...v) : Math.max(...v); return { v: b, ids: order.filter(id => fn(id) === b) }; };
+    const bPutt = best(id => F[id].putt, true), bLilla = best(id => F[id].lilla), bBrutto = best(id => sum(F[id].brutto), true);
+    const names = ids => ids.map(id => esc(H.byId(id).nick)).join(" & ");
+    const award = (label, ids, val) => `<div class="card rec"><small>${label}</small><b>${val}</b>
+      <div class="who">${ids.map(id => `<img src="${img(H.byId(id))}" alt="">`).join("")}${names(ids)}</div></div>`;
+    const rows = order.map((id, i) => { const f = F[id], p = H.byId(id);
+      const hl = (cond) => cond ? ' class="best"' : "";
+      return `<tr data-profile="${id}" tabindex="0" role="button" style="cursor:pointer"><td class="fpos">${i + 1}</td>
+        <td class="fname"><img src="${img(p)}" alt="">${esc(p.nick)}</td>
+        ${f.netto.map(n => `<td>${n}</td>`).join("")}<td>${f.start ? "−1" : ""}</td>
+        <td class="ftot${i === 0 ? " best" : ""}">${tot(id)}</td>
+        <td${hl(bBrutto.ids.includes(id))}>${sum(f.brutto)}</td><td${hl(bPutt.ids.includes(id))}>${f.putt}</td><td${hl(bLilla.ids.includes(id))}>${f.lilla}</td></tr>`; }).join("");
+    const T = S.teams, tp = I.teamPoints;
+    const matches = (I.matches || []).map((ms, k) => `<div class="card fmatch"><div class="fm-head"><b>Final ${k + 1}</b>
+        ${tp ? `<span><span class="c-${T.G.color}">${fmtNum(tp.G[k])}</span> – <span class="c-${T.H.color}">${fmtNum(tp.H[k])}</span></span>` : ""}</div>
+        ${ms.map(([h, g, w]) => `<div class="fm-row"><span class="${w === "H" ? "win" : ""}"><i class="dot ${T.H.color}"></i>${esc(H.byId(h).nick)}</span>
+          <em>${w === "D" ? "Delad" : "vs"}</em><span class="r ${w === "G" ? "win" : ""}">${esc(H.byId(g).nick)}<i class="dot ${T.G.color}"></i></span></div>`).join("")}</div>`).join("");
+    return `
+      <p class="final-meta">${esc(I.venue || "")}${I.dates ? " · " + esc(I.dates) : ""}${I.holes ? ` · ${I.holes} hål` : ""}</p>
+      <div class="records">
+        ${award("Mästare", [order[0]], tot(order[0]) + " slag netto")}
+        ${award("Bästa puttaren", bPutt.ids, bPutt.v + " puttar")}
+        ${award("Lilla Rundan", bLilla.ids, bLilla.v + " p")}
+        ${award("Lägsta brutto", bBrutto.ids, bBrutto.v + " slag")}
+      </div>
+      <h3 class="sub-h">Resultatlista</h3>
+      <div class="p-table-wrap"><table class="p-table final-table">
+        <tr><th></th><th>Spelare</th><th>F1</th><th>F2</th><th>F3</th><th>Start</th><th>Netto</th><th>Brutto</th><th>Puttar</th><th>Lilla R.</th></tr>${rows}</table></div>
+      <p class="final-foot">Netto per finalrunda. Lika slag i finalen delas inte, där avgör lägst handicap. Tryck på en spelare för profilen.</p>
+      ${matches ? `<h3 class="sub-h">Lagtävlingen i finalen</h3><div class="fmatches">${matches}</div>` : ""}`;
+  }
+
   /* =======================================================
      Ritar allt som beror på vald säsong
      ======================================================= */
@@ -205,6 +249,7 @@
     fill("[data-filters]", `<button class="chip active" data-filter="all">Alla</button>` +
       Object.entries(S.teams).map(([id, t]) => `<button class="chip" data-filter="${id}">${esc(t.name)}</button>`).join(""));
 
+    fill("[data-final]", finalSection());
     const side = S.side || {};
     fill("[data-season-lists]",
       toplist("Lilla Rundan", "Poäng, bästa 6 av 8", side.lilla, v => v + " p") +
