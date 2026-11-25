@@ -198,14 +198,16 @@ window.HGM = {
     wins: { oversten: 8, idioten: 7, lufsen: 6, "27an": 5, kaka: 5, spikrak: 5, ossa: 5, frallan: 4, eb: 3, mike: 3, svagern: 3, lillegubben: 2, elof: 2, tamo: 2, sillen: 1 },
     /* Snitt puttar per runda 2021–2026 (6 bästa per säsong, varje säsong väger lika) */
     putt: { "idioten": 30.761, "27an": 30.851, "spikrak": 30.869, "lillegubben": 31.194, "oversten": 31.257, "eb": 31.507, "tamo": 31.563, "ossa": 31.618, "mike": 32.032, "kaka": 32.682, "lufsen": 32.851, "sillen": 33.014, "frallan": 33.450, "elof": 34.917, "svagern": 38.219 },
-    lilla: { lufsen: 11.668, idioten: 11.533, lillegubben: 11.432, kaka: 11.218, mike: 11.167, "27an": 11.102, oversten: 11.100, eb: 11.075, frallan: 10.838, spikrak: 10.733, ossa: 10.679, svagern: 10.483, elof: 10.117, tamo: 9.861, sillen: 9.517 },
-    loyal: { oversten: 100, eb: 93, kaka: 93, idioten: 90, ossa: 90, lufsen: 88, spikrak: 85, mike: 84, lillegubben: 83, elof: 80, "27an": 73, frallan: 68, svagern: 61, tamo: 60, sillen: 54 }
+    /* Lilla Rundan: snittpoäng per runda 2021–2026 (6 bästa per säsong) */
+    lilla: { "lufsen": 11.779, "idioten": 11.533, "lillegubben": 11.471, "eb": 11.285, "oversten": 11.222, "kaka": 11.071, "frallan": 11.032, "27an": 10.891, "ossa": 10.871, "spikrak": 10.666, "svagern": 10.069, "tamo": 9.979, "mike": 9.959, "elof": 9.320, "sillen": 8.848 },
+    /* Andel spelade grundomgångar 2021–2026 i procent (Idioten 2021–2025) */
+    loyal: { "oversten": 100.0, "eb": 94.2, "kaka": 92.1, "ossa": 91.7, "idioten": 90.0, "lufsen": 90.0, "lillegubben": 85.8, "spikrak": 85.4, "27an": 73.3, "frallan": 73.3, "elof": 72.9, "mike": 72.4, "tamo": 60.6, "svagern": 59.2, "sillen": 53.3 }
   },
   records: [
     { label: "Lägsta nettoscore", value: "64 slag", player: "tamo", note: "2025" },
     { label: "Lägsta bruttoscore", value: "68 slag", player: "spikrak", note: "2021, Forsgårdens GK" },
     { label: "Flest delsegrar", value: "8 st", player: "oversten", note: "2021–2026" },
-    { label: "Mest trogna spelaren", value: "100 %", player: "oversten", note: "alla rundor 2021–2025" },
+    { label: "Mest trogna spelaren", value: "100 %", player: "oversten", note: "alla grundomgångar 2021–2026" },
     { label: "Lägst placeringssumma", value: "27", player: "oversten", note: "säsongen 2022" }
   ],
   /* Bildgalleri: s = 2026 | tidigare | jubileum */

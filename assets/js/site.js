@@ -284,8 +284,8 @@
   fill("[data-alltime-lists]",
     toplist("Mest delsegrar", "Omgångsvinster 2021–2026, delade räknas", H.allTime.wins, v => v + " st") +
     toplist("Bästa puttaren", "Snitt puttar per runda 2021–2026 · lägst vinner", H.allTime.putt, dec, true) +
-    toplist("Lilla Rundan", "Snittpoäng per runda 2021–2025", H.allTime.lilla, dec) +
-    toplist("Mest trogna spelaren", "Andel spelade rundor 2021–2025", H.allTime.loyal, v => v + " %"));
+    toplist("Lilla Rundan", "Snittpoäng per runda 2021–2026", H.allTime.lilla, dec) +
+    toplist("Mest trogna spelaren", "Andel spelade grundomgångar 2021–2026", H.allTime.loyal, v => fmtNum(v) + " %"));
   fill("[data-records]", H.records.map(r => { const p = H.byId(r.player);
     return `<div class="card rec"><small>${esc(r.label)}</small><b>${esc(r.value)}</b>
       <div class="who"><img src="${img(p)}" alt="">${esc(p.nick)} <span>${esc(r.note)}</span></div></div>`; }).join(""));
@@ -348,7 +348,7 @@
     const badges = [
       ...titles.map(y => `🏆 Mästare ${y}`), ...grund.map(y => `🥇 Grundspelet ${y}`),
       ...recs.map(r => `⭐ ${r.label}: ${r.value}`),
-      at.wins[id] ? `${at.wins[id]} delsegrar totalt` : "", at.loyal[id] ? `${at.loyal[id]} % spelade rundor 2021–25` : ""
+      at.wins[id] ? `${at.wins[id]} delsegrar totalt` : "", at.loyal[id] ? `${fmtNum(at.loyal[id])} % spelade omgångar 2021–26` : ""
     ].filter(Boolean);
     const rows = R.map((r, i) => r
       ? `<tr class="${r[4] === 1 ? "win" : ""}"><td>Omgång ${i + 1}</td><td>${r[0]}</td><td>${r[4]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`
