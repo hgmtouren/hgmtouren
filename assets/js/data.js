@@ -152,13 +152,13 @@ window.HGM = {
   },
 
   champions: [
-    { year: 2026, player: "oversten", venue: "Araslövs GK", note: "221 slag netto i finalen",
+    { year: 2026, photo: "mastare/2026.jpg", player: "oversten", venue: "Araslövs GK", note: "221 slag netto i finalen",
       awards: [["Bästa puttaren", "spikrak"], ["Lilla Rundan", "frallan"]] },
-    { year: 2025, player: "oversten", venue: "Landskrona GK", note: "ett slag före Frallan" },
-    { year: 2024, player: "spikrak", venue: "Landskrona GK" },
-    { year: 2023, player: "oversten", venue: "Torrevieja", note: "ett slag före Spikrak" },
-    { year: 2022, player: "kaka", venue: "Torrevieja", note: "avgjort på sista hålet" },
-    { year: 2021, player: "lillegubben", venue: "Skogaby" }
+    { year: 2025, photo: "mastare/2025.jpg", photoBadge: true, player: "oversten", venue: "Landskrona GK", note: "ett slag före Frallan" },
+    { year: 2024, photo: "mastare/2024.jpg", photoBadge: true, player: "spikrak", venue: "Landskrona GK" },
+    { year: 2023, photo: "mastare/2023.jpg", photoBadge: true, player: "oversten", venue: "Torrevieja", note: "ett slag före Spikrak" },
+    { year: 2022, photo: "mastare/2022.jpg", photoBadge: true, player: "kaka", venue: "Torrevieja", note: "avgjort på sista hålet" },
+    { year: 2021, photo: "mastare/2021.jpg", photoBadge: true, player: "lillegubben", venue: "Skogaby" }
   ],
 
   /* Vinnare av grundomgångarna (poängställningen) */

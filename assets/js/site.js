@@ -114,7 +114,7 @@
   function champFeature() {
     const c = H.champions[0], p = H.byId(c.player);
     return `<div class="champ-feature">
-      <img src="${img(p)}" alt="${esc(p.nick)}">
+      <img src="${c.photo ? ROOT + "assets/img/" + c.photo : img(p)}" alt="${esc(p.nick)}" style="object-position:center 30%">
       <div class="body">
         <span class="eyebrow">Mästare ${c.year}${c.venue ? " · " + esc(c.venue) : ""}</span>
         <h3>${esc(p.nick)}</h3>
@@ -270,11 +270,28 @@
   fill("[data-champ-feature]", champFeature());
   fill("[data-formats]", H.formats.map(f => `<div class="card fmt reveal"><h3>${esc(f.name)}</h3><p>${esc(f.desc)}</p></div>`).join(""));
   fill("[data-rules]", H.rules.map(r => `<li>${esc(r)}</li>`).join(""));
-  fill("[data-champ-list]", H.champions.map(c => {
+  const ordinal = n => n + (n === 1 || n === 2 ? ":a" : ":e");
+  fill("[data-champ-list]", H.champions.map((c, i) => {
     const p = H.byId(c.player);
-    return `<div class="card champ"><span class="yr">${c.year}</span>
-      <div class="p"><img src="${img(p)}" alt="" loading="lazy"><div><b>${esc(p.nick)}</b><br><small style="color:var(--muted)">${esc(p.name)}</small></div></div>${c.venue ? `<small style="color:var(--muted)">Final: ${esc(c.venue)}</small>` : ""}</div>`;
+    const nth = H.champions.filter(x => x.player === c.player && x.year <= c.year).length;
+    return `<article class="hof ${i === 0 ? "hof-current" : ""}" data-profile="${p.id}" tabindex="0" role="button" aria-label="${esc(p.nick)}, mästare ${c.year}">
+      <div class="hof-img"><img src="${ROOT}assets/img/${c.photo || ""}" alt="Prisutdelning ${c.year}" loading="lazy" onerror="this.src='${img(p)}'"></div>
+      ${i === 0 ? `<span class="hof-pill">👑 Regerande mästare</span>` : ""}
+      <div class="hof-body">
+        ${c.photoBadge ? "" : `<span class="hof-year">${c.year}</span>`}
+        <h3>${esc(p.nick)}</h3>
+        <small>${esc(p.name)}</small>
+        <div class="hof-meta">
+          ${c.venue ? `<span>⛳ ${esc(c.venue)}</span>` : ""}
+          <span>🏆 ${ordinal(nth)} titeln</span>
+        </div>
+        ${c.note ? `<p>${esc(c.note.charAt(0).toUpperCase() + c.note.slice(1))}.</p>` : ""}
+      </div>
+    </article>`;
   }).join(""));
+  const titleCount = {}; H.champions.forEach(c => titleCount[c.player] = (titleCount[c.player] || 0) + 1);
+  fill("[data-title-count]", Object.entries(titleCount).sort((a, b) => b[1] - a[1]).map(([id, n]) => { const p = H.byId(id);
+    return `<span class="tc"><img src="${img(p)}" alt="">${esc(p.nick)} <b>${n}</b></span>`; }).join(""));
   fill("[data-timeline]", [...H.history].reverse().map(h => {
     const facts = [["Final", h.final ? esc(h.final) : null], ["Mästare", h.champion ? esc(H.byId(h.champion).nick) : null], ["Grundspelet", h.grund ? esc(H.byId(h.grund).nick) : null]].filter(f => f[1]);
     return `<article class="card tl tl-rich">
