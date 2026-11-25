@@ -154,7 +154,7 @@ window.HGM = {
   champions: [
     { year: 2026, photo: "mastare/2026.jpg", player: "oversten", venue: "Araslövs GK", note: "221 slag netto i finalen",
       awards: [["Bästa puttaren", "spikrak"], ["Lilla Rundan", "frallan"]] },
-    { year: 2025, photo: "mastare/2025.jpg", photoBadge: true, player: "oversten", venue: "Landskrona GK", note: "ett slag före Frallan" },
+    { year: 2025, photo: "mastare/2025.jpg", player: "oversten", venue: "Landskrona GK", note: "ett slag före Frallan" },
     { year: 2024, photo: "mastare/2024.jpg", photoBadge: true, player: "spikrak", venue: "Landskrona GK" },
     { year: 2023, photo: "mastare/2023.jpg", player: "oversten", venue: "Torrevieja", note: "ett slag före Spikrak" },
     { year: 2022, photo: "mastare/2022.jpg", player: "kaka", venue: "Torrevieja", note: "avgjort på sista hålet" },
