@@ -436,3 +436,16 @@ a { color: inherit; }
   .final-table td.fname img { width: 24px; height: 24px; }
   .profile-body { padding: 16px 12px 20px; }
 }
+
+/* ── Vinnare av grundspelet ─────────────────── */
+.gw-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .gw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .gw-grid { grid-template-columns: 1fr; } }
+.gw { display: flex; align-items: center; gap: 14px; padding: 14px; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+.gw:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(15,29,22,.06), 0 12px 28px rgba(15,29,22,.1); }
+.gw:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.gw img { width: 72px; height: 72px; border-radius: 16px; object-fit: cover; flex: none; }
+.gw small { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.gw b { display: block; font-family: var(--display); font-size: 1.35rem; letter-spacing: -.01em; line-height: 1.15; }
+.gw-res { font-size: .88rem; color: var(--ink-2); }
+.gw-res strong { font-family: var(--display); color: var(--forest-2); font-size: 1rem; }

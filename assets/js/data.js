@@ -162,7 +162,15 @@ window.HGM = {
   ],
 
   /* Vinnare av grundomgångarna (poängställningen) */
-  grundWinners: { 2021: "oversten", 2022: "oversten", 2023: "oversten", 2024: "spikrak", 2025: "oversten", 2026: "lufsen" },
+  /* Vinnare av grundomgångarna. 2021–2024: lägst placeringssumma vann. 2025–: flest poäng (250-skalan). */
+  grundWinners: {
+    2021: { p: "oversten", value: "29", unit: "i placeringssumma" },
+    2022: { p: "oversten", value: "27", unit: "i placeringssumma", note: "rekord" , img: "vinnare/2022.jpg" },
+    2023: { p: "oversten", value: "24", unit: "i placeringssumma", note: "bästa 7 av 9" , img: "vinnare/2023.jpg" },
+    2024: { p: "spikrak",  value: "35", unit: "i placeringssumma" , img: "vinnare/2024.jpg" },
+    2025: { p: "oversten", value: "1 213", unit: "poäng" , img: "vinnare/2025.jpg" },
+    2026: { p: "lufsen",   value: "1 180", unit: "poäng" }
+  },
 
   history: [
     { year: 2021, title: "HGM Touren grundas", text: "Touren startar med eget poängsystem, lag och slutspel. Lillegubben vinner den allra första mästartiteln." },

@@ -289,8 +289,10 @@
   fill("[data-records]", H.records.map(r => { const p = H.byId(r.player);
     return `<div class="card rec"><small>${esc(r.label)}</small><b>${esc(r.value)}</b>
       <div class="who"><img src="${img(p)}" alt="">${esc(p.nick)} <span>${esc(r.note)}</span></div></div>`; }).join(""));
-  fill("[data-grund-winners]", Object.entries(H.grundWinners).reverse().map(([y, id]) =>
-    `<div class="card rw"><small>Grundspelet ${y}</small><b>${esc(H.byId(id).nick)}</b></div>`).join(""));
+  fill("[data-grund-winners]", Object.entries(H.grundWinners).reverse().map(([y, w]) => { const p = H.byId(w.p);
+    return `<button class="card gw" data-profile="${p.id}"><img src="${w.img ? ROOT + "assets/img/" + w.img : img(p)}" alt="" loading="lazy">
+      <div><small>Grundspelet ${y}</small><b>${esc(p.nick)}</b>
+      <span class="gw-res"><strong>${esc(w.value)}</strong> ${esc(w.unit)}${w.note ? ` · ${esc(w.note)}` : ""}</span></div></button>`; }).join(""));
 
   /* ── Resultat för en omgång ── */
   function openRound(i) {
@@ -343,7 +345,7 @@
     const played = R.filter(Boolean);
     const best = played.length ? Math.min(...played.map(r => r[0])) : "–";
     const wins = played.filter(r => r[4] === 1).length;
-    const titles = H.titles(id), grund = Object.entries(H.grundWinners).filter(([, w]) => w === id).map(([y]) => y);
+    const titles = H.titles(id), grund = Object.entries(H.grundWinners).filter(([, w]) => w.p === id).map(([y]) => y);
     const at = H.allTime, recs = H.records.filter(r => r.player === id);
     const badges = [
       ...titles.map(y => `🏆 Mästare ${y}`), ...grund.map(y => `🥇 Grundspelet ${y}`),
