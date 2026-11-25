@@ -68,10 +68,7 @@
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-year]");
     if (!b) return;
-    Y = +b.dataset.year;
-    try { localStorage.setItem("hgm.season", Y); } catch (err) {}
-    try { history.replaceState(null, "", "#" + Y); } catch (err) { location.hash = Y; }
-    render();
+    setSeason(+b.dataset.year);
   });
 
   /* ── Hjälp för lag ── */
@@ -342,7 +339,16 @@
   document.addEventListener("click", e => { const b = e.target.closest("[data-round-detail]"); if (b) openRound(+b.dataset.roundDetail); });
 
   /* ── Spelarprofil (vald säsong + översikt alla säsonger) ── */
-  function openProfile(id) {
+  function finalPlace(y, id) {
+    const S = H.S(y);
+    if (S.final && S.final[id]) {
+      const order = S.finalOrder || Object.keys(S.final), f = S.final[id];
+      return { pos: order.indexOf(id) + 1, text: `${f.netto.reduce((a, b) => a + b, 0) + (f.start || 0)} netto` };
+    }
+    const c = H.champions.find(x => x.year === y);
+    return c && c.player === id ? { pos: 1, text: "mästare" } : null;
+  }
+  function profileHTML(id) {
     const p = H.byId(id), S = H.S(Y), tid = H.teamOf(Y, id), t = tid ? S.teams[tid] : null;
     const ranked = H.ranked(Y), me = ranked.find(x => x.id === id);
     const pos = me && me.points ? ranked.indexOf(me) + 1 : null;
@@ -362,41 +368,65 @@
       : `<tr class="dns"><td>Omgång ${i + 1}</td><td colspan="5">Ej spelat</td></tr>`).join("");
     const frows = F ? F.netto.map((n, i) => `<tr class="final"><td>Final ${i + 1}</td><td>${n}</td><td colspan="4"></td></tr>`).join("") +
       `<tr class="final"><td>Finalen totalt</td><td>${F.netto.reduce((a, b) => a + b, 0) + (F.start || 0)}</td><td colspan="2"></td><td>${F.lilla}</td><td>${F.putt}</td></tr>` : "";
-    const history = H.seasonYears().filter(y => H.S(y).points[id]).map(y => {
+    const years = H.seasonYears();
+    const grundChips = years.filter(y => H.S(y).points[id]).map(y => {
       const rk = H.ranked(y), m = rk.find(x => x.id === id);
-      return `<button class="hist-chip ${y === Y ? "on" : ""}" data-year="${y}" data-reopen="${id}">${y}<b>${rk.indexOf(m) + 1}:a</b><span>${fmtNum(m.points)} p i grundspelet</span></button>`;
+      return `<button class="hist-chip ${y === Y ? "on" : ""}" data-pyear="${y}" aria-pressed="${y === Y}">${y}<b>${rk.indexOf(m) + 1}:a</b><span>${fmtNum(m.points)} p</span></button>`;
     }).join("");
-    const wrap = document.createElement("div");
-    wrap.className = "profile-bg";
-    wrap.innerHTML = `<div class="profile" role="dialog" aria-modal="true" aria-label="${esc(p.nick)}">
+    const finalChips = years.map(y => [y, finalPlace(y, id)]).filter(([, f]) => f).map(([y, f]) =>
+      `<button class="hist-chip final-chip ${y === Y ? "on" : ""}" data-pyear="${y}" aria-pressed="${y === Y}">${y}<b>${f.pos === 1 ? "🏆 1:a" : f.pos + ":a"}</b><span>${esc(f.text)}</span></button>`).join("");
+    const fp = finalPlace(Y, id);
+    return `
       <div class="profile-head"><img src="${img(p)}" alt="">
         <div><h3>${esc(p.nick)}</h3><small>${esc(p.name)}${t ? ` · ${esc(t.name)} ${Y}${t.captain === id ? " · Kapten" : ""}` : ""}</small></div>
         <button class="profile-close" aria-label="Stäng">✕</button></div>
       <div class="profile-body">
-        ${history ? `<div class="p-section"><h4>Grundspelet per säsong</h4><p class="p-hint">Placering och poäng i grundomgångarna. Tryck på ett år för att se den säsongen.</p><div class="hist">${history}</div></div>` : ""}
+        ${grundChips ? `<div class="p-section"><h4>Grundspelet per säsong</h4><p class="p-hint">Placering och poäng i grundomgångarna. Tryck på ett år för att visa den säsongen nedan.</p><div class="hist">${grundChips}</div></div>` : ""}
+        ${finalChips ? `<div class="p-section"><h4>Slutspelet per säsong</h4><div class="hist">${finalChips}</div></div>` : ""}
+        <div class="p-season-label" id="p-season">Visar säsong ${Y}</div>
         <div class="p-kpis">
           <div class="p-kpi"><b>${me && me.points ? fmtNum(me.points) : "–"}</b><span>Poäng grundspelet ${Y}${pos ? ` · plats ${pos}` : ""}</span></div>
+          <div class="p-kpi"><b>${fp ? fp.pos + ":a" : "–"}</b><span>Slutspelet ${Y}${fp ? " · " + esc(fp.text) : ""}</span></div>
           <div class="p-kpi"><b>${best}</b><span>Bästa netto grundspelet ${Y}</span></div>
-          <div class="p-kpi"><b>${wins}</b><span>Delsegrar grundspelet ${Y}</span></div>
-          <div class="p-kpi"><b>${played.length}/8</b><span>Spelade grundomgångar</span></div>
+          <div class="p-kpi"><b>${wins} · ${played.length}/8</b><span>Delsegrar · spelade omgångar ${Y}</span></div>
         </div>
         ${badges.length ? `<div class="p-badges">${badges.map(b => `<span class="badge">${esc(b)}</span>`).join("")}</div>` : ""}
         ${R.length ? `<div class="p-section"><h4>Säsongen ${Y} runda för runda</h4><div class="p-table-wrap"><table class="p-table">
           <tr><th>Omgång</th><th>Netto</th><th>Plac</th><th>Poäng</th><th>Lilla R.</th><th>Puttar</th></tr>${rows}${frows}</table></div></div>`
-          : `<p class="empty">Inga rundor rapporterade ${Y}.</p>`}
-      </div></div>`;
+          : `<p class="empty">Inga rundor inlagda för ${Y}.</p>`}
+      </div>`;
+  }
+  /* Byt säsong för hela sidan (används av väljaren och profilen) */
+  function setSeason(y) {
+    Y = y;
+    try { localStorage.setItem("hgm.season", y); } catch (err) {}
+    try { history.replaceState(null, "", "#" + y); } catch (err) {}
+    render();
+  }
+  function openProfile(id) {
+    const wrap = document.createElement("div");
+    wrap.className = "profile-bg";
+    const box = document.createElement("div");
+    box.className = "profile"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true");
+    box.setAttribute("aria-label", H.byId(id).nick);
+    box.innerHTML = profileHTML(id);
+    wrap.appendChild(box);
     const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); last && last.focus && last.focus(); };
     const onKey = e => { if (e.key === "Escape") close(); };
     const last = document.activeElement;
     wrap.addEventListener("click", e => {
-      if (e.target === wrap) return close();
-      const r = e.target.closest("[data-reopen]");
-      if (r) { close(); setTimeout(() => openProfile(r.dataset.reopen), 0); }
+      if (e.target === wrap || e.target.closest(".profile-close")) return close();
+      const c = e.target.closest("[data-pyear]");
+      if (c) {
+        setSeason(+c.dataset.pyear);
+        box.innerHTML = profileHTML(id);
+        const label = box.querySelector("#p-season");
+        if (label) { box.scrollTo({ top: label.offsetTop - 12, behavior: "smooth" }); label.classList.remove("flash"); void label.offsetWidth; label.classList.add("flash"); }
+      }
     });
-    wrap.querySelector(".profile-close").addEventListener("click", close);
     document.addEventListener("keydown", onKey);
     document.body.appendChild(wrap);
-    wrap.querySelector(".profile-close").focus();
+    box.querySelector(".profile-close").focus();
   }
   document.addEventListener("click", e => {
     if (e.target.closest(".profile")) return;

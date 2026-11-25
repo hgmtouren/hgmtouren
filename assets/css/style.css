@@ -466,3 +466,11 @@ a { color: inherit; }
 .tl-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 720px) { .tl-media { min-height: 0; aspect-ratio: 16/10; } }
 .p-hint { color: var(--muted); font-size: .85rem; margin: -4px 0 10px; }
+.hist-chip.on { background: var(--forest); border-color: var(--forest); color: #fff; box-shadow: none; }
+.hist-chip.on span { color: rgba(255,255,255,.75); }
+.final-chip b { color: #1d4ed8; }
+.final-chip.on b { color: #fff; }
+.p-season-label { font-family: var(--display); font-weight: 700; font-size: 1.05rem; padding: 10px 14px; border-radius: 12px; background: var(--surface-2); }
+.p-season-label.flash { animation: flash 1.2s ease-out; }
+@keyframes flash { 0% { background: var(--accent); } 100% { background: var(--surface-2); } }
+@media (prefers-reduced-motion: reduce) { .p-season-label.flash { animation: none; } }
