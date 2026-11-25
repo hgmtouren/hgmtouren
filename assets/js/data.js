@@ -157,7 +157,7 @@ window.HGM = {
     { year: 2025, photo: "mastare/2025.jpg", photoBadge: true, player: "oversten", venue: "Landskrona GK", note: "ett slag före Frallan" },
     { year: 2024, photo: "mastare/2024.jpg", photoBadge: true, player: "spikrak", venue: "Landskrona GK" },
     { year: 2023, photo: "mastare/2023.jpg", photoBadge: true, player: "oversten", venue: "Torrevieja", note: "ett slag före Spikrak" },
-    { year: 2022, photo: "mastare/2022.jpg", photoBadge: true, player: "kaka", venue: "Torrevieja", note: "avgjort på sista hålet" },
+    { year: 2022, photo: "mastare/2022.jpg", player: "kaka", venue: "Torrevieja", note: "avgjort på sista hålet" },
     { year: 2021, photo: "mastare/2021.jpg", player: "lillegubben", venue: "Skogaby" }
   ],
 
