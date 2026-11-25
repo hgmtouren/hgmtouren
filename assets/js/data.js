@@ -172,13 +172,20 @@ window.HGM = {
     2026: { p: "lufsen",   value: "1 180", unit: "poäng" }
   },
 
+  /* Vår historia – texterna bygger på historiksidan på gamla hgmtouren.se */
   history: [
-    { year: 2021, title: "HGM Touren grundas", text: "Touren startar med eget poängsystem, lag och slutspel. Lillegubben vinner den allra första mästartiteln." },
-    { year: 2022, title: "Kaka mästare", text: "Andra säsongen. Staffan ”Kaka” Tumbygg vinner slutspelet." },
-    { year: 2023, title: "Översten tar sin första titel", text: "Mikael ”Översten” Ehrenborg vinner slutspelet för första gången." },
-    { year: 2024, title: "Spikrak mästare", text: "Hasse ”Spikrak” Wahlberg vinner slutspelet." },
-    { year: 2025, title: "Översten igen", text: "Översten vinner sin andra mästartitel." },
-    { year: 2026, title: "Tredje titeln för Översten", text: "Översten vinner finalen på Araslöv med 221 slag netto och blir först med tre titlar. Lufsen vinner grundspelet, Lag G vinner lagfinalerna (176,65–143,65), Spikrak blir bästa puttare och Frallan vinner Lilla Rundan." }
+    { year: 2021, title: "Premiären", img: "galleri/tidigare-14.jpg", final: "Skogaby", champion: "lillegubben", grund: "oversten",
+      text: "HGM Tourens grundare Anders Engelbrektsson, EB, bröt sig ur den tidigare KIF Touren och startade HGM. Tävlingen spelades både som singelspel och som lagtävling, precis som i dag. Finalrundan spelades på klassiska Skogaby i tuffa förhållanden, och segrare i första upplagan blev Lars Ambratt, även kallad Lillegubben. Alla minns att 27:an vann ett par strumpor. Översten vann grundomgången. Skogaby bjöd varken på bra väder eller en bra anläggning, så det bestämdes snabbt att touren behövde ett nytt finalställe." },
+    { year: 2022, title: "Till solen i Torrevieja", img: "galleri/tidigare-15.jpg", final: "Torrevieja", champion: "kaka", grund: "oversten",
+      text: "Efter ett regnigt finalspel året innan suktade grabbarna efter värme och sol. Andra upplagan avslutades därför i värmen i Torrevieja, som blev tourens favoritställe. Finalen blev en jämn fight mellan EB och Kaka, och många minns Kakas omöjliga slag på 17:e hålet som troligen var avgörande. Till slut stod Kaka som vinnare efter att ha avgjort på sista hålet. Översten vann grundspelet." },
+    { year: 2023, title: "Översten tar sin första titel", img: "galleri/tidigare-16.jpg", final: "Spanien", champion: "oversten", grund: "oversten",
+      text: "Efter en övertygande seger i grundspelet kom Översten till den spanska solkusten med riktigt gott självförtroende. Efter en tight finalrunda tog han sin första HGM-seger, ett slag före Hasse Spikrak. Ännu ett slutspel som avgjordes på sista hålet." },
+    { year: 2024, title: "Spikrak segrar i Landskrona", img: "galleri/tidigare-17.jpg", final: "Landskrona GK", champion: "spikrak", grund: "spikrak",
+      text: "Efter två år av finalspel i Spanien testade touren Landskrona Golfklubb, en mycket utmanande bana med tuffa greener och svårbemästrad vind. Efter andraplatsen 2023 och seger i grundspelet kom Hasse Spikrak till Landskrona med gott självförtroende. En stabil start gav stor ledning inför sista rundan, som nästan blåste bort, men Spikrak säkrade sin första HGM-seger. Han blev därmed bara den fjärde vinnaren av HGM Touren." },
+    { year: 2025, title: "Översten blir tourens gigant", img: "galleri/tidigare-18.jpg", final: "Landskrona GK", champion: "oversten", grund: "oversten",
+      text: "Många tyckte att Landskrona var tufft 2024 och ville ha revansch, så tävlingsledaren EB förlade finalspelet där igen. Översten vann grundspelet för fjärde gången och tog med sig ett slags fördel in i finalen. Det visade sig vara helt avgörande: efter sista putten på det 54:e hålet vann han ett slag före Frallan. Därmed hade Översten vunnit fyra av fem grundomgångar och två mästartitlar, och han var den alla ville slå när 2026 drog igång." },
+    { year: 2026, title: "Duellen och tredje titeln", img: "galleri/2026-01.jpg", final: "Araslövs GK", champion: "oversten", grund: "lufsen",
+      text: "Fjorton spelare, två lag och åtta grundomgångar som blev en duell mellan Lufsen och Frallan. Lufsen tog fyra delsegrar och vann grundspelet med 1 180 poäng, Frallan tog tre och slutade på 1 065. Översten tog sin åttonde delseger genom tiderna på Vinbergs GK, med ett birdieslag från 171 meter på hål 16, och blev ensam rekordinnehavare. Lag G vann lagtävlingen i grundspelet med 431 mot 354. I slutspelet på Araslöv 11–13 september vann Översten på 221 slag netto före EB och Frallan och blev först med tre mästartitlar. Spikrak blev bästa puttare, Frallan vann Lilla Rundan och Lag G vann alla tre lagfinalerna." }
   ],
 
   /* Tävlingsformerna */

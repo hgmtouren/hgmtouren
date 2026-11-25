@@ -278,9 +278,14 @@
     return `<div class="card champ"><span class="yr">${c.year}</span>
       <div class="p"><img src="${img(p)}" alt="" loading="lazy"><div><b>${esc(p.nick)}</b><br><small style="color:var(--muted)">${esc(p.name)}</small></div></div>${c.venue ? `<small style="color:var(--muted)">Final: ${esc(c.venue)}</small>` : ""}</div>`;
   }).join(""));
-  fill("[data-timeline]", [...H.history].reverse().map(h => `
-    <div class="card tl reveal"><span class="yr">${h.year}</span>
-      <div><h4>${esc(h.title)}</h4><p>${esc(h.text)}</p></div></div>`).join(""));
+  fill("[data-timeline]", [...H.history].reverse().map(h => {
+    const facts = [["Final", h.final ? esc(h.final) : null], ["Mästare", h.champion ? esc(H.byId(h.champion).nick) : null], ["Grundspelet", h.grund ? esc(H.byId(h.grund).nick) : null]].filter(f => f[1]);
+    return `<article class="card tl tl-rich">
+      ${h.img ? `<div class="tl-media"><img src="${ROOT}assets/img/${h.img}" alt="" loading="lazy"></div>` : ""}
+      <div class="tl-body"><span class="yr">${h.year}</span><span class="tl-season">Säsong ${h.year - H.founded + 1}</span>
+        <h4>${esc(h.title)}</h4><p>${esc(h.text)}</p>
+        <div class="tl-facts">${facts.map(([k, v]) => `<span><small>${k}</small>${v}</span>`).join("")}</div></div>
+    </article>`; }).join(""));
   fill("[data-alltime-lists]",
     toplist("Mest delsegrar", "Omgångsvinster 2021–2026, delade räknas", H.allTime.wins, v => v + " st") +
     toplist("Bästa puttaren", "Snitt puttar per runda 2021–2026 · lägst vinner", H.allTime.putt, dec, true) +

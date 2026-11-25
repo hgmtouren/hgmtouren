@@ -449,3 +449,19 @@ a { color: inherit; }
 .gw b { display: block; font-family: var(--display); font-size: 1.35rem; letter-spacing: -.01em; line-height: 1.15; }
 .gw-res { font-size: .88rem; color: var(--ink-2); }
 .gw-res strong { font-family: var(--display); color: var(--forest-2); font-size: 1rem; }
+
+/* ── Vår historia ───────────────────────────── */
+.tl-rich { display: grid; grid-template-columns: 300px 1fr; gap: 0; padding: 0; overflow: hidden; }
+.tl-img { width: 100%; height: 100%; min-height: 240px; object-fit: cover; }
+.tl-body { padding: 24px 26px; display: flex; flex-direction: column; gap: 8px; }
+.tl-rich .yr { font-size: 2.2rem; }
+.tl-season { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: -6px; }
+.tl-rich h4 { font-size: 1.35rem; margin: 2px 0 0; }
+.tl-rich p { max-width: 68ch; }
+.tl-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.tl-facts span { background: var(--surface-2); border-radius: 10px; padding: 6px 10px; font-weight: 600; font-size: .9rem; }
+.tl-facts small { display: block; font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+@media (max-width: 720px) { .tl-rich { grid-template-columns: 1fr; } .tl-img { min-height: 0; aspect-ratio: 16/10; } .tl-body { padding: 18px; } }
+.tl-media { position: relative; min-height: 240px; }
+.tl-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 720px) { .tl-media { min-height: 0; aspect-ratio: 16/10; } }
