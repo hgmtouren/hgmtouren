@@ -364,7 +364,7 @@
       `<tr class="final"><td>Finalen totalt</td><td>${F.netto.reduce((a, b) => a + b, 0) + (F.start || 0)}</td><td colspan="2"></td><td>${F.lilla}</td><td>${F.putt}</td></tr>` : "";
     const history = H.seasonYears().filter(y => H.S(y).points[id]).map(y => {
       const rk = H.ranked(y), m = rk.find(x => x.id === id);
-      return `<button class="hist-chip ${y === Y ? "on" : ""}" data-year="${y}" data-reopen="${id}">${y}<b>${rk.indexOf(m) + 1}:a</b><span>${fmtNum(m.points)} p</span></button>`;
+      return `<button class="hist-chip ${y === Y ? "on" : ""}" data-year="${y}" data-reopen="${id}">${y}<b>${rk.indexOf(m) + 1}:a</b><span>${fmtNum(m.points)} p i grundspelet</span></button>`;
     }).join("");
     const wrap = document.createElement("div");
     wrap.className = "profile-bg";
@@ -373,12 +373,12 @@
         <div><h3>${esc(p.nick)}</h3><small>${esc(p.name)}${t ? ` · ${esc(t.name)} ${Y}${t.captain === id ? " · Kapten" : ""}` : ""}</small></div>
         <button class="profile-close" aria-label="Stäng">✕</button></div>
       <div class="profile-body">
-        ${history ? `<div class="p-section"><h4>Säsonger</h4><div class="hist">${history}</div></div>` : ""}
+        ${history ? `<div class="p-section"><h4>Grundspelet per säsong</h4><p class="p-hint">Placering och poäng i grundomgångarna. Tryck på ett år för att se den säsongen.</p><div class="hist">${history}</div></div>` : ""}
         <div class="p-kpis">
-          <div class="p-kpi"><b>${me && me.points ? fmtNum(me.points) : "–"}</b><span>Poäng ${Y}${pos ? ` · plats ${pos}` : ""}</span></div>
-          <div class="p-kpi"><b>${best}</b><span>Bästa netto ${Y}</span></div>
-          <div class="p-kpi"><b>${wins}</b><span>Delsegrar ${Y}</span></div>
-          <div class="p-kpi"><b>${played.length}/8</b><span>Spelade omgångar</span></div>
+          <div class="p-kpi"><b>${me && me.points ? fmtNum(me.points) : "–"}</b><span>Poäng grundspelet ${Y}${pos ? ` · plats ${pos}` : ""}</span></div>
+          <div class="p-kpi"><b>${best}</b><span>Bästa netto grundspelet ${Y}</span></div>
+          <div class="p-kpi"><b>${wins}</b><span>Delsegrar grundspelet ${Y}</span></div>
+          <div class="p-kpi"><b>${played.length}/8</b><span>Spelade grundomgångar</span></div>
         </div>
         ${badges.length ? `<div class="p-badges">${badges.map(b => `<span class="badge">${esc(b)}</span>`).join("")}</div>` : ""}
         ${R.length ? `<div class="p-section"><h4>Säsongen ${Y} runda för runda</h4><div class="p-table-wrap"><table class="p-table">
