@@ -186,3 +186,5 @@ table.sc { border-collapse: separate; border-spacing: 0; font-size: .82rem; back
 .win-card small { display: block; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .win-card b { font-family: var(--display); font-size: 1.15rem; display: block; margin-top: 2px; }
 .win-card span { color: var(--ink-2); font-size: .85rem; }
+
+.btn-danger { background: var(--double); color: #fff; }

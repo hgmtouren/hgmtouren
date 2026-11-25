@@ -42,6 +42,17 @@
   function toast(msg) { $toast.textContent = msg; $toast.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => $toast.hidden = true, 2200); }
   function sheet(html, bind) { $sheet.innerHTML = html; $sheet.hidden = false; $sheetBg.hidden = false; bind && bind($sheet); }
   function closeSheet() { $sheet.hidden = true; $sheetBg.hidden = true; }
+  /* Egen bekräftelseruta (webbläsarens confirm() fungerar inte överallt) */
+  function ask(msg, okLabel, danger) {
+    return new Promise(res => {
+      sheet(`<h3>${esc(msg)}</h3><div class="dock-inner" style="margin-top:8px">
+        <button class="btn btn-line" id="ask-no">Avbryt</button>
+        <button class="btn ${danger ? "btn-danger" : "btn-dark"}" id="ask-yes">${esc(okLabel)}</button></div>`, s => {
+        s.querySelector("#ask-no").onclick = () => { closeSheet(); res(false); };
+        s.querySelector("#ask-yes").onclick = () => { closeSheet(); res(true); };
+      });
+    });
+  }
   $sheetBg.addEventListener("click", closeSheet);
   function header(sub, main, menu) { $sub.textContent = sub; $main.textContent = main; $menu.hidden = !menu; }
   const vibrate = () => { try { navigator.vibrate && navigator.vibrate(8); } catch {} };
@@ -93,8 +104,8 @@
             <span class="pill">🏆 ${nick(w.id)}</span></button>`;
         }).join("") : `<div class="card item"><small>Inga sparade rapporter än. De dyker upp här när du sparat en runda.</small></div>`}
       </div>`;
-    document.getElementById("new").onclick = () => {
-      if (rep && !confirm("Du har en påbörjad rapport. Vill du kasta den och börja om?")) return;
+    document.getElementById("new").onclick = async () => {
+      if (rep && !(await ask("Du har en påbörjad rapport. Vill du kasta den och börja om?", "Kasta och börja om", true))) return;
       viewSetup({ round: guessRound(), course: "", date: today(), ids: store.get("hgm.lastIds", []) });
     };
     const r = document.getElementById("resume"); if (r) r.onclick = () => viewEntry();
@@ -233,18 +244,18 @@
       <button class="card item" data-a="review"><div class="grow"><b>Granska & spara</b></div></button>
       <button class="card item" data-a="home"><div class="grow"><b>Till startsidan</b><small>Rapporten ligger kvar och kan fortsättas</small></div></button>
       <button class="card item" data-a="discard"><div class="grow"><b style="color:var(--double)">Kasta rapporten</b></div></button>
-    </div>`, s => s.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
+    </div>`, s => s.querySelectorAll("[data-a]").forEach(b => b.onclick = async () => {
       closeSheet();
       const a = b.dataset.a;
       if (a === "review") viewReview(rep, false);
       if (a === "home") viewHome();
-      if (a === "discard" && confirm("Kasta rapporten? Inmatade resultat försvinner.")) { rep = null; store.del(KEY_ACTIVE); viewHome(); }
+      if (a === "discard" && await ask("Kasta rapporten? Inmatade resultat försvinner.", "Kasta", true)) { rep = null; store.del(KEY_ACTIVE); viewHome(); }
     }));
   };
 
-  function finish() {
+  async function finish() {
     const missing = rep.entries.filter(e => !complete(e)).map(e => nick(e.id));
-    if (missing.length && !confirm(`Netto, Lilla Rundan eller puttar saknas för ${missing.join(", ")}. Spara ändå?`)) return;
+    if (missing.length && !(await ask(`Netto, Lilla Rundan eller puttar saknas för ${missing.join(", ")}. Spara ändå?`, "Spara ändå"))) return;
     const saved = store.get(KEY_SAVED, []);
     saved.push({ ...rep, saved: new Date().toISOString() });
     store.set(KEY_SAVED, saved);
@@ -300,7 +311,11 @@
     try {
       if (navigator.share) { await navigator.share({ text }); return; }
       await navigator.clipboard.writeText(text); toast("Kopierat – klistra in i chatten");
-    } catch (e) { if (e && e.name !== "AbortError") prompt("Kopiera texten:", text); }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+      sheet(`<h3>Kopiera och klistra in i chatten</h3><textarea class="field" id="share-txt" rows="10" readonly style="font-size:.9rem">${esc(text)}</textarea>`,
+        s => { const t = s.querySelector("#share-txt"); t.focus(); t.select(); });
+    }
   }
 
   /* Start */

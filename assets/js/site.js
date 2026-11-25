@@ -14,6 +14,7 @@
     ["hem", "Hem", ""],
     ["stallning", "Ställning", "stallning/"],
     ["spelarna", "Spelarna", "spelarna/"],
+    ["statistik", "Statistik", "statistik/"],
     ["mastare", "Mästare", "mastare/"]
   ];
 
@@ -23,7 +24,7 @@
     nav.className = "nav";
     nav.innerHTML = `
       <div class="wrap">
-        <a class="brand" href="${ROOT}"><span class="brand-mark">HGM</span>HGM Touren</a>
+        <a class="brand" href="${ROOT}"><img class="brand-logo" src="${ROOT}assets/img/logo.jpg" alt="">HGM Touren</a>
         <ul class="nav-links">
           ${LINKS.map(([id, label, href]) => `<li><a href="${ROOT}${href}" class="${id === PAGE ? "active" : ""}">${label}</a></li>`).join("")}
           <li class="only-mobile"><a href="${ROOT}app/">Rapportera resultat →</a></li>
@@ -49,7 +50,7 @@
     foot.className = "footer";
     foot.innerHTML = `
       <div class="wrap">
-        <a class="brand" href="${ROOT}" style="color:#fff"><span class="brand-mark">HGM</span>HGM Touren</a>
+        <a class="brand" href="${ROOT}" style="color:#fff"><img class="brand-logo" src="${ROOT}assets/img/logo.jpg" alt="">HGM Touren</a>
         <nav>${LINKS.map(([, l, h]) => `<a href="${ROOT}${h}">${l}</a>`).join("")}<a href="${ROOT}app/">Resultatappen</a></nav>
         <small>© ${H.season} HGM Touren · All Swingers · Est. ${H.founded} · <a href="mailto:${H.contact}">${H.contact}</a></small>
       </div>`;
@@ -65,7 +66,7 @@
       const cls = pos === 1 ? "row top first" : pos <= 3 ? "row top" : "row";
       const t = H.teams[p.team];
       const cap = t.captain === p.id ? " · Kapten" : "";
-      return `<div class="${cls}">
+      return `<div class="${cls}" data-profile="${p.id}" tabindex="0" role="button" style="cursor:pointer">
         <div class="pos">${pos}</div>
         <img class="avatar" src="${img(p)}" alt="" loading="lazy">
         <div class="who"><b>${esc(p.nick)}</b><small><span class="dot ${p.team}"></span>${t.name}${cap}</small></div>
@@ -117,7 +118,7 @@
       const pos = ranked.indexOf(p) + 1;
       const titles = H.titles(p.id);
       const cap = H.teams[p.team].captain === p.id;
-      return `<article class="pcard" data-team="${p.team}">
+      return `<article class="pcard" data-team="${p.team}" data-profile="${p.id}" tabindex="0" role="button" aria-label="Visa profil för ${esc(p.nick)}">
         <img src="${img(p)}" alt="${esc(p.nick)}" loading="lazy">
         <span class="tag ${p.team}">${H.teams[p.team].name}${cap ? " · C" : ""}</span>
         <span class="rank">#${pos}</span>
@@ -163,12 +164,94 @@
   fill("[data-champ-list]", H.champions.map(c => {
     const p = H.byId(c.player);
     return `<div class="card champ"><span class="yr">${c.year}</span>
-      <div class="p"><img src="${img(p)}" alt="" loading="lazy"><div><b>${esc(p.nick)}</b><br><small style="color:var(--muted)">${esc(p.name)}</small></div></div></div>`;
+      <div class="p"><img src="${img(p)}" alt="" loading="lazy"><div><b>${esc(p.nick)}</b><br><small style="color:var(--muted)">${esc(p.name)}</small></div></div>${c.venue ? `<small style="color:var(--muted)">Final: ${esc(c.venue)}</small>` : ""}</div>`;
   }).join(""));
 
   fill("[data-timeline]", [...H.history].reverse().map(h => `
     <div class="card tl reveal"><span class="yr">${h.year}</span>
       <div><h4>${esc(h.title)}</h4><p>${esc(h.text)}</p></div></div>`).join(""));
+
+  /* ── Statistik: topplistor ── */
+  function toplist(title, sub, obj, fmt, asc, limit = 8) {
+    const rows = Object.entries(obj).filter(([id]) => H.byId(id)).sort((a, b) => asc ? a[1] - b[1] : b[1] - a[1]);
+    let n = 0, prev = null;
+    const html = rows.map(([id, v], i) => {
+      if (v !== prev) n = i + 1; prev = v;
+      const p = H.byId(id);
+      return `<div class="tl-row" ${i >= limit ? "hidden" : ""}><span class="n">${n}</span><img src="${img(p)}" alt="" loading="lazy"><b>${esc(p.nick)}</b><span class="v">${fmt(v)}</span></div>`;
+    }).join("");
+    return `<div class="card toplist"><h3>${title}</h3><small>${sub}</small>${html}
+      ${rows.length > limit ? `<button class="tl-more" data-more>Visa alla ${rows.length}</button>` : ""}</div>`;
+  }
+  const dec = v => v.toFixed(2).replace(".", ",");
+  const S = H.season2026;
+  fill("[data-season-lists]",
+    toplist("Lilla Rundan", "Poäng, bästa 6 av 8", S.lilla, v => v + " p") +
+    toplist("Bästa puttaren", "Puttar, bästa 6 av 8 · lägst vinner", S.putt, v => v, true) +
+    toplist("Närmast hål", "Antal vinster, alla 8 omgångar", S.nh, v => v + " st") +
+    toplist("Längsta drive", "Antal vinster, alla 8 omgångar", S.ld, v => v + " st"));
+  fill("[data-alltime-lists]",
+    toplist("Mest delsegrar", "Omgångsvinster 2021–2026, delade räknas", H.allTime.wins, v => v + " st") +
+    toplist("Bästa puttaren", "Snitt puttar per runda 2021–2025 · lägst vinner", H.allTime.putt, dec, true) +
+    toplist("Lilla Rundan", "Snittpoäng per runda 2021–2025", H.allTime.lilla, dec) +
+    toplist("Mest trogna spelaren", "Andel spelade rundor 2021–2025", H.allTime.loyal, v => v + " %"));
+  fill("[data-records]", H.records.map(r => { const p = H.byId(r.player);
+    return `<div class="card rec"><small>${esc(r.label)}</small><b>${esc(r.value)}</b>
+      <div class="who"><img src="${img(p)}" alt="">${esc(p.nick)} <span>${esc(r.note)}</span></div></div>`; }).join(""));
+  fill("[data-round-winners]", H.roundWinners2026.map((w, i) =>
+    `<div class="card rw"><small>Omgång ${i + 1}</small><b>🏆 ${w.map(id => esc(H.byId(id).nick)).join(" & ")}</b></div>`).join(""));
+  fill("[data-grund-winners]", Object.entries(H.grundWinners).reverse().map(([y, id]) =>
+    `<div class="card rw"><small>Grundspelet ${y}</small><b>${esc(H.byId(id).nick)}</b></div>`).join(""));
+  document.querySelectorAll("[data-more]").forEach(b => b.addEventListener("click", () => {
+    b.parentElement.querySelectorAll(".tl-row[hidden]").forEach(r => r.hidden = false); b.remove();
+  }));
+
+  /* ── Spelarprofil ── */
+  function openProfile(id) {
+    const p = H.byId(id), t = H.teams[p.team], R = (H.rounds2026 || {})[id] || [], F = (H.final2026 || {})[id];
+    const played = R.filter(Boolean), pos = ranked.indexOf(p) + 1;
+    const best = played.length ? Math.min(...played.map(r => r[0])) : "–";
+    const wins = played.filter(r => r[4] === 1).length;
+    const titles = H.titles(id), grund = Object.entries(H.grundWinners).filter(([, w]) => w === id).map(([y]) => y);
+    const at = H.allTime, recs = H.records.filter(r => r.player === id);
+    const badges = [
+      ...titles.map(y => `🏆 Mästare ${y}`), ...grund.map(y => `🥇 Grundspelet ${y}`),
+      ...recs.map(r => `⭐ ${r.label}: ${r.value}`),
+      at.wins[id] ? `${at.wins[id]} delsegrar totalt` : "", at.loyal[id] ? `${at.loyal[id]} % spelade rundor 2021–25` : ""
+    ].filter(Boolean);
+    const rows = R.map((r, i) => r
+      ? `<tr class="${r[4] === 1 ? "win" : ""}"><td>Omgång ${i + 1}</td><td>${r[0]}</td><td>${r[4]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`
+      : `<tr class="dns"><td>Omgång ${i + 1}</td><td colspan="5">Ej spelat</td></tr>`).join("");
+    const frows = F ? F.netto.map((n, i) => `<tr class="final"><td>Final ${i + 1}</td><td>${n}</td><td colspan="4"></td></tr>`).join("") +
+      `<tr class="final"><td>Finalen totalt</td><td>${F.netto.reduce((a, b) => a + b, 0) + (F.start || 0)}</td><td colspan="2"></td><td>${F.lilla}</td><td>${F.putt}</td></tr>` : "";
+    const wrap = document.createElement("div");
+    wrap.className = "profile-bg";
+    wrap.innerHTML = `<div class="profile" role="dialog" aria-modal="true" aria-label="${esc(p.nick)}">
+      <div class="profile-head"><img src="${img(p)}" alt="">
+        <div><h3>${esc(p.nick)}</h3><small>${esc(p.name)}${t ? ` · ${t.name}${t.captain === id ? " · Kapten" : ""}` : ""}</small></div>
+        <button class="profile-close" aria-label="Stäng">✕</button></div>
+      <div class="profile-body">
+        <div class="p-kpis">
+          <div class="p-kpi"><b>${p.points ? p.points.toLocaleString("sv-SE") : "–"}</b><span>Poäng 2026${pos ? ` · plats ${pos}` : ""}</span></div>
+          <div class="p-kpi"><b>${best}</b><span>Bästa netto 2026</span></div>
+          <div class="p-kpi"><b>${wins}</b><span>Delsegrar 2026</span></div>
+          <div class="p-kpi"><b>${played.length}/8</b><span>Spelade omgångar</span></div>
+        </div>
+        ${badges.length ? `<div class="p-badges">${badges.map(b => `<span class="badge">${esc(b)}</span>`).join("")}</div>` : ""}
+        ${R.length ? `<div class="p-section"><h4>Säsongen 2026 runda för runda</h4><div class="p-table-wrap"><table class="p-table">
+          <tr><th>Omgång</th><th>Netto</th><th>Plac</th><th>Poäng</th><th>Lilla R.</th><th>Puttar</th></tr>${rows}${frows}</table></div></div>` : ""}
+      </div></div>`;
+    const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); last && last.focus(); };
+    const onKey = e => { if (e.key === "Escape") close(); };
+    const last = document.activeElement;
+    wrap.addEventListener("click", e => { if (e.target === wrap) close(); });
+    wrap.querySelector(".profile-close").addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(wrap);
+    wrap.querySelector(".profile-close").focus();
+  }
+  document.addEventListener("click", e => { const c = e.target.closest("[data-profile]"); if (c) openProfile(c.dataset.profile); });
+  document.addEventListener("keydown", e => { const c = e.target.closest && e.target.closest("[data-profile]"); if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openProfile(c.dataset.profile); } });
 
   /* Filter på spelarsidan */
   document.querySelectorAll("[data-filter]").forEach(btn => {
