@@ -39,10 +39,10 @@ window.HGM = {
   seasons: {
     2027: {
       status: "kommande",
-      note: "Lagen är ett förslag, beräknat för att bli så jämna som möjligt utifrån poäng 2025–2026, snittnetto 2026 och handicap. Båda lagen har samma snitthandicap (10,9).",
+      note: "Kaptener: Frallan och Översten. Övriga spelare är ett förslag, beräknat för att lagen ska bli så jämna som möjligt utifrån poäng 2025–2026, snittnetto 2026 och handicap.",
       teams: {
-        G: { name: "Lag G", nick: "GAY",   color: "g", captain: "lufsen",   members: ["lufsen", "eb", "lillegubben", "27an", "kaka", "tamo", "svagern"] },
-        H: { name: "Lag H", nick: "HETRO", color: "h", captain: "oversten", members: ["oversten", "ossa", "frallan", "mike", "spikrak", "sillen", "elof"] }
+        G: { name: "Lag G", nick: "GAY",   color: "g", captain: "frallan",  members: ["frallan", "ossa", "mike", "lillegubben", "kaka", "tamo", "elof"] },
+        H: { name: "Lag H", nick: "HETRO", color: "h", captain: "oversten", members: ["oversten", "lufsen", "eb", "27an", "spikrak", "sillen", "svagern"] }
       },
       points: {}, rounds: {}, roundWinners: [], side: { lilla: {}, putt: {}, nh: {}, ld: {} }
     },
