@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Statistik – HGM Touren</title>
+<meta name="description" content="HGM Touren – Sveriges hetaste privata golftour. Ställning, spelare, lag och mästare.">
+<meta name="theme-color" content="#003d1d">
+<link rel="icon" href="../assets/img/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body data-root="../" data-page="statistik">
+<header id="site-nav"></header>
+<section class="hero page-hero">
+  <div class="wrap">
+    <span class="eyebrow">2021–2026</span>
+    <h1>Statistik</h1>
+    <p class="lead">Grundspelet per säsong, rekord och topplistorna genom tiderna.</p>
+    <div class="switch-row" data-season-switch></div><div data-season-note></div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Grundspelet <span data-season></span></span><h2>Delsegrare per omgång</h2>
+      <p data-season-summary></p></div></div>
+    <div class="rounds-strip" data-round-winners></div>
+  </div>
+</section>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Grundspelet <span data-season></span></span><h2>Sidotävlingarna</h2></div>
+      <a class="link-more" href="../stallning/index.html">Poängställningen →</a></div>
+    <div class="stat-grid" data-season-lists></div>
+  </div>
+</section>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Genom tiderna</span><h2>Rekord</h2></div></div>
+    <div class="records" data-records></div>
+  </div>
+</section>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Genom tiderna</span><h2>Topplistor</h2>
+      <p>Snitt räknas på de 6 bästa rundorna per säsong.</p></div></div>
+    <div class="stat-grid" data-alltime-lists></div>
+  </div>
+</section>
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="section-head"><div><span class="eyebrow">Historik</span><h2>Vinnare av grundspelet</h2>
+      <p>2021–2024 vann den med lägst placeringssumma. Från 2025 vinner den med flest poäng.</p></div></div>
+    <div class="gw-grid" data-grund-winners></div>
+  </div>
+</section>
+<footer id="site-footer"></footer>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>
