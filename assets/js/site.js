@@ -339,6 +339,13 @@
         <div class="p-table-wrap"><table class="p-table final-table">
           <tr><th>Plac</th><th>Spelare</th><th>Netto</th><th>${H.isPlac(Y) ? "Poängb." : "Poäng"}</th><th>Lilla</th><th>Putt</th></tr>${rows}</table></div>
         ${dns.length ? `<p class="final-foot">Spelade inte: ${dns.map(esc).join(", ")}.</p>` : ""}
+        ${(() => { const x = (S.roundSide || [])[i];
+          const list = arr => arr.map(([pid, hole]) => `<span class="rs-chip"><img src="${img(H.byId(pid))}" alt="">${esc(H.byId(pid).nick)}${hole ? ` <em>hål ${hole}</em>` : ""}</span>`).join("");
+          if (!x) return `<div class="round-side"><p class="final-foot">Vem som vann närmast hål och längsta drive är inte registrerat per omgång för ${Y}.${S.side && (S.side.nh || S.side.ld) ? " Totalerna för säsongen finns under Sidotävlingarna." : ""}</p></div>`;
+          return `<div class="round-side">
+            <div><h4>🎯 Närmast hål</h4><div class="rs-list">${list(x.nh)}${(x.nhNone || []).map(h => `<span class="rs-chip rs-none">Ingen på hål ${h}</span>`).join("")}</div></div>
+            <div><h4>🏌️ Längsta drive</h4><div class="rs-list">${list(x.ld)}</div></div>
+            ${x.note ? `<p class="final-foot">${esc(x.note)}</p>` : ""}</div>`; })()}
         <div class="round-nav">
           <button class="btn btn-line" data-step="-1" ${i === 0 ? "disabled" : ""}>← Omgång ${i}</button>
           <button class="btn btn-line" data-step="1" ${i + 1 >= total ? "disabled" : ""}>Omgång ${i + 2} →</button>

@@ -89,6 +89,17 @@ window.HGM = {
         { course: "Göteborgs Golfklubb", date: "15 augusti" },
         { course: "Forsgårdens GK, Slottsbanan", date: "30 augusti", note: "Röd tee" }
       ],
+      /* Närmast hål och längsta drive per omgång (från matchrapporterna). [spelare, hål] – hål null = okänt */
+      roundSide: [
+        { nh: [["kaka", 5], ["frallan", 10], ["spikrak", 13]], nhNone: [2], ld: [["lufsen", null], ["tamo", null]] },
+        { nh: [["lufsen", 5], ["kaka", 10], ["tamo", 13]], nhNone: [2], ld: [["lufsen", 7], ["spikrak", 11]] },
+        { nh: [["ossa", 5], ["spikrak", 10], ["lillegubben", 13]], nhNone: [2], ld: [["27an", 8], ["27an", 11]] },
+        { nh: [["eb", 1], ["lufsen", 4], ["oversten", 8], ["eb", 10], ["27an", 16]], ld: [["lufsen", 7], ["27an", 17]] },
+        { nh: [["oversten", 2], ["lufsen", 5], ["spikrak", 10]], nhNone: [13], note: "Översten var först i år att träffa green på hål 2.", ld: [["ossa", 11], ["mike", 17]] },
+        { nh: [["ossa", 7], ["oversten", 13], ["oversten", 16]], ld: [["27an", 4], ["lufsen", 11]] },
+        { nh: [["kaka", 1], ["ossa", 4], ["spikrak", 7], ["spikrak", 13], ["lillegubben", 17]], ld: [["spikrak", 5], ["27an", 10]] },
+        { nh: [["27an", 2], ["spikrak", 5], ["frallan", 10], ["27an", 13]], ld: [["27an", 7], ["kaka", 11]] }
+      ],
       roundWinners: [["frallan"], ["frallan", "lufsen"], ["lufsen"], ["lufsen"], ["frallan"], ["oversten"], ["ossa"], ["lufsen", "ossa"]],
       /* Slutspelet: netto per finalrunda, brutto per finalrunda, puttar och Lilla Rundan totalt.
          start = startslag (vinnaren av grundspelet startar på −1) */
